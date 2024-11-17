@@ -13,13 +13,13 @@ export interface IHistory {
 }
 
 export interface IPortfolio extends Document {
-	userId: mongoose.Types.ObjectId;
+	userId: String;
 	assets: IAsset[];
 	history: IHistory[];
 }
 
 const PortfolioSchema: Schema<IPortfolio> = new Schema({
-	userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+	userId: { type: String, ref: 'users', required: true },
 	assets: [
 		{
 			symbol: String,

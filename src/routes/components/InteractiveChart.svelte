@@ -1,33 +1,97 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
+	import type { Chart } from 'chart.js/auto';
+	import { fetchPortfolioHistory } from '$lib/api';
 	import { onMount } from 'svelte';
-	import { Chart, type ChartConfiguration } from 'chart.js/auto';
 
-	let chart: Chart;
+	export const chartData = writable<{ labels: string[]; values: number[] }>({
+		labels: [],
+		values: [],
+	});
+
+	let selectedFilter = '1M'; // Defaultní filtr
+
+	// Možnosti filtru
+	const filters = [
+		{ label: '1M', value: '1M' },
+		{ label: '3M', value: '3M' },
+		{ label: '6M', value: '6M' },
+		{ label: '1Y', value: '1Y' },
+		{ label: 'All', value: 'ALL' },
+	];
+
+	// Funkce pro aktualizaci dat
+	async function updateChart(filter: string) {
+		const data = await fetchPortfolioHistory("12345", filter); // DELETE 12345 after implementing the API
+		chartData.set(data);
+	}
 
 	onMount(() => {
-		const ctx = document.getElementById('myChart') as HTMLCanvasElement;
-		const config: ChartConfiguration = {
-			type: 'line' as const,
-			data: {
-				labels: ['January', 'February', 'March'],
-				datasets: [
-					{
-						label: 'Portfolio Value',
-						data: [1000, 1200, 1500],
-						borderColor: 'rgb(75, 192, 192)',
-						tension: 0.1,
+		updateChart(selectedFilter);
+	});
+
+	// Action pro inicializaci a aktualizaci grafu
+	export function chart(node: HTMLCanvasElement, data: { labels: string[]; values: number[] }) {
+		let chart: Chart;
+
+		async function initializeChart(labels: string[], values: number[]) {
+			const { Chart } = await import('chart.js');
+
+			chart = new Chart(node, {
+				type: 'line',
+				data: {
+					labels: labels,
+					datasets: [
+						{
+							label: 'Portfolio Value',
+							data: values,
+							borderColor: 'rgb(75, 192, 192)',
+							backgroundColor: 'rgba(75, 192, 192, 0.2)',
+							tension: 0.1,
+						},
+					],
+				},
+				options: {
+					responsive: true,
+					scales: {
+						x: { title: { display: true, text: 'Time' } },
+						y: { title: { display: true, text: 'Value (in USD)' } },
 					},
-				],
+				},
+			});
+		}
+
+		// Vytvoření nebo aktualizace grafu
+		const unsubscribe = chartData.subscribe((data) => {
+			if (chart) {
+				chart.destroy();
+			}
+			initializeChart(data.labels, data.values);
+		});
+
+		return {
+			destroy() {
+				if (chart) chart.destroy();
+				unsubscribe();
 			},
 		};
-		chart = new Chart(ctx, config);
-
-		return () => {
-			chart.destroy();
-		};
-	});
+	}
 </script>
 
-<div>
-	<canvas id="myChart"></canvas>
+<!-- Filtrační tlačítka -->
+<div class="filter-buttons">
+	{#each filters as filter}
+		<button
+			on:click={() => {
+				selectedFilter = filter.value;
+				updateChart(filter.value);
+			}}
+			class:selected={selectedFilter === filter.value}
+		>
+			{filter.label}
+		</button>
+	{/each}
 </div>
+
+<!-- Canvas pro Chart.js -->
+<canvas use:chart={$chartData}></canvas>
