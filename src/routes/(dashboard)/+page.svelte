@@ -105,6 +105,8 @@
 	  } else {
 		console.error('Failed to fetch user data');
 	  }
+
+	  console.log(userData);
 	});
 
 	//
@@ -119,13 +121,18 @@
 		<h2>Welcome, {userData.username}</h2>
 		<p>Email: {userData.email}</p>
 		<h3>Portfolio</h3>
+		<!-- {#if userData.portfolioId.assets && userData.portfolioId.assets.length === 0}
+		  <p>No assets in portfolio</p>
+		{:else}
+		  <p>Assets in portfolio:</p>
+		{/if}
 		<ul>
 		  {#each userData.portfolioId.assets as asset}
 			<li>
 			  {asset.symbol}: {asset.quantity} units @ ${asset.currentValue}
 			</li>
 		  {/each}
-		</ul>
+		</ul> -->
 	  </section>
 	{:else}
 	  <p>Loading...</p>

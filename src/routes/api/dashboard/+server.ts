@@ -10,7 +10,7 @@ export async function GET({ request }) {
 		}
 
 		const token = authHeader.slice(7);
-		console.log(token);
+
 		const decoded = jwt.verify(token, process.env.VITE_JWT_SECRET || '') as JwtPayload;
 
 		// Ověření  ID

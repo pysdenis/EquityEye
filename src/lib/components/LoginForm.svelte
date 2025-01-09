@@ -57,15 +57,15 @@
 		<form on:submit|preventDefault={handleSubmit} class="flex flex-col gap-4">
 			<label class="flex flex-col">
 				Email
-				<input type="text" bind:value={email} class="p-2" />
+				<input type="email" bind:value={email} class="p-2 md:w-[15rem]" />
 			</label>
 			<label class="flex flex-col">
 				Heslo
 				<div class="relative">
 					{#if showPassword}
-						<input type="text" bind:value={loginPassword} class="p-2" />
+						<input type="text" bind:value={loginPassword} class="p-2 md:w-[15rem]" />
 					{:else}
-						<input type="password" bind:value={loginPassword} class="p-2" />
+						<input type="password" bind:value={loginPassword} class="p-2 md:w-[15rem]" />
 					{/if}
 					<button
 						type="button"

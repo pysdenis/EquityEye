@@ -1,31 +1,30 @@
 <script lang="ts">
-	import Icon from '$lib/components/Icon.svelte';
-	import '$lib/assets/css/main.css';
-	import logo from '$lib/assets/images/logo.png';
-	import type Category from '$lib/types/Category';
-	import menu from '$lib/assets/icons/menu.svg?raw';
-	import cross from '$lib/assets/icons/cross.svg?raw';
+	// import Icon from '$lib/components/Icon.svelte';
+	// import '$lib/assets/css/main.css';
+	// import logo from '$lib/assets/images/logo.png';
+	// import menu from '$lib/assets/icons/menu.svg?raw';
+	// import cross from '$lib/assets/icons/cross.svg?raw';
 
-	export let categories: Category[] = [];
-	let showOthers = false;
-	let windowScrollY = 0;
+	// export let categories: Category[] = [];
+	// let showOthers = false;
+	// let windowScrollY = 0;
 
-	function toggleMenu() {
-		const menu = document.querySelector('#menu');
-		const closeMenu = document.querySelector('#closeMenu');
-		menu?.classList.toggle('hidden');
-		closeMenu?.classList.toggle('hidden');
-		showOthers = false;
+	// function toggleMenu() {
+	// 	const menu = document.querySelector('#menu');
+	// 	const closeMenu = document.querySelector('#closeMenu');
+	// 	menu?.classList.toggle('hidden');
+	// 	closeMenu?.classList.toggle('hidden');
+	// 	showOthers = false;
 
-		if (menu?.classList.contains('hidden')) {
-			menu?.classList.remove('flex');
-		} else {
-			menu?.classList.add('flex');
-		}
-	}
+	// 	if (menu?.classList.contains('hidden')) {
+	// 		menu?.classList.remove('flex');
+	// 	} else {
+	// 		menu?.classList.add('flex');
+	// 	}
+	// }
 </script>
 
-<svelte:window bind:scrollY={windowScrollY} />
+<!-- <svelte:window bind:scrollY={windowScrollY} />
 
 <header class="flex py-5 bg-primary w-full z-10 fixed transition-all duration-300" class:!py-3={windowScrollY > 40} class:shadow-xl={windowScrollY > 40}>
 	<div class="container flex items-center justify-between gap-12" class:!lg:justify-center={windowScrollY > 40}>
@@ -78,4 +77,4 @@
 </header>
 <div class="absolute w-full h-24 bg-primary">
 
-</div>
+</div> -->

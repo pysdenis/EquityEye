@@ -64,19 +64,19 @@
 		<form on:submit|preventDefault={handleSubmit} class="flex flex-col md:grid grid-cols-2 gap-4">
 			<label class="flex flex-col">
 				Email
-				<input type="text" bind:value={email} class="p-2" />
+				<input type="email" bind:value={email} class="p-2 md:w-[15rem]" />
 			</label>
 			<label class="flex flex-col">
 				Uživatelské jméno
-				<input type="text" bind:value={username} class="p-2" />
+				<input type="text" bind:value={username} class="p-2 md:w-[15rem]" />
 			</label>
 			<label class="flex flex-col">
 				Heslo
 				<div class="relative">
 					{#if showPassword}
-						<input type="text" bind:value={password} class="p-2" />
+						<input type="text" bind:value={password} class="p-2 md:w-[15rem]" />
 					{:else}
-						<input type="password" bind:value={password} class="p-2" />
+						<input type="password" bind:value={password} class="p-2 md:w-[15rem]" />
 					{/if}
 				</div>
 			</label>
@@ -84,9 +84,9 @@
 				Heslo znovu
 				<div class="relative">
 					{#if showPassword}
-						<input type="text" bind:value={confirmPassword} class="p-2" />
+						<input type="text" bind:value={confirmPassword} class="p-2 md:w-[15rem]" />
 					{:else}
-						<input type="password" bind:value={confirmPassword} class="p-2" />
+						<input type="password" bind:value={confirmPassword} class="p-2 md:w-[15rem]" />
 					{/if}
 					<button type="button" class="absolute top-1/2 right-2 transform -translate-y-1/2" on:click={() => showPassword = !showPassword}>
 						{#if showPassword}
