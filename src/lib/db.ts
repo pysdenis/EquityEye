@@ -1,25 +1,24 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 
-dotenv.config();
+const connectDb = async () => {
+	try {
+		if (mongoose.connection.readyState >= 1) return;
 
-let isConnected = false;
-
-export async function connectToDB() {
-	if (!process.env.MONGO_URI) {
-		console.error('MONGO_URI is not set');
-		return;
-	} else {
-		console.log('MONGO_URI:', process.env.MONGO_URI);
-	}
-
-	if (!isConnected) {
-		try {
-			await mongoose.connect(process.env.MONGO_URI, {});
-			isConnected = true;
-			console.log('Connected to MongoDB');
-		} catch (error) {
-			console.error('Failed to connect to MongoDB:', error);
+		const dbUri = process.env.MONGO_URI;
+		console.log('dbUri:', dbUri);
+		console.log('Připojování k databázi MongoDB...');
+		if (!dbUri) {
+			console.error('Není nastavena proměnná prostředí MONGO_URI');
+			process.exit(1);
 		}
+		await mongoose.connect(dbUri, {
+			dbName: 'equityeye',
+		});
+		console.log('Připojeno k databázi MongoDB');
+	} catch (error) {
+		console.error('Chyba při připojování k databázi MongoDB:', error);
+		process.exit(1);
 	}
-}
+};
+
+export default connectDb;

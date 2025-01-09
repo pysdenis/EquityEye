@@ -1,0 +1,67 @@
+html {
+	@apply font-poppins text-text h-full scroll-pt-48 overflow-auto scroll-smooth;
+}
+
+body {
+	@apply flex min-h-[100dvh] w-full flex-col overflow-y-auto overflow-x-hidden leading-normal;
+}
+
+h2,
+h3,
+h4,
+h5 {
+	@apply font-poppins mx-auto mb-3 leading-[1.25] lg:mb-4;
+}
+
+h1 {
+	@apply font-poppins mx-auto mb-3 pt-8 text-5xl leading-[1.25] lg:mb-4 lg:pt-8 lg:text-6xl;
+}
+
+h1 {
+	@apply font-bold;
+}
+
+h2 {
+	@apply text-5xl lg:text-6xl;
+}
+
+h3 {
+	@apply text-[1.1875rem] lg:text-2xl;
+}
+
+h4 {
+	@apply text-lg;
+}
+
+h5 {
+	@apply text-base font-medium;
+}
+
+p {
+	@apply text-[0.9375rem] leading-[1.5] lg:text-[1rem];
+}
+
+a {
+	@apply font-poppins hover:text-accent duration-300 transition-all;
+}
+
+section,
+.section {
+	@apply mb-20 lg:mb-[6.75rem];
+}
+
+/*
+** CKEditor
+*/ /* uncomment this block to apply the styles to the CKEditor content */ /*
+
+.ckeditor-content .image,
+.ckeditor-content .media,
+.ckeditor-content img {
+	@apply mx-auto my-8 max-w-full max-lg:!w-full;
+}
+
+.ckeditor-content p {
+	@apply lg:text-md mb-6 text-justify text-sm leading-[1.75rem] lg:mb-6 lg:leading-9;
+}
+
+*/
