@@ -16,7 +16,11 @@
 
 			if (!response.ok && !data.valid) {
 				console.error('Failed to verify token');
+				localStorage.removeItem('token');
+				window.location.href = '/login';
 			}
+		} else {
+			window.location.href = '/login';
 		}
 	});
 </script>

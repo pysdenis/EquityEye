@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { parseSourceSet } from "./parseSourceSet.js";
 	import type { SourceSetQuery } from "./SourceSetQuery.js";
-	import { onMount } from "svelte";
+	import placeholderImg from '$lib/assets/images/placeholder.png'
 
 	let className = "";
 	export { className as class };
@@ -16,6 +16,11 @@
 	export let preload: boolean | undefined = undefined;
 	export let naturalHeight: number | undefined = undefined;
 	export let naturalWidth: number | undefined = undefined;
+
+	function handleError(event: Event) {
+		const target = event.target as HTMLImageElement;
+		target.src = placeholderImg;
+	}
 </script>
 
 <svelte:head>
@@ -31,5 +36,5 @@
 		<source srcset={`${image} 1x`} type="image/webp" media={parseSourceSet(query)} />
 	{/each}
 
-	<img class={imgClass} {alt} src={image} {width} {height} {loading} bind:naturalHeight bind:naturalWidth />
+	<img class={imgClass} {alt} src={image} {width} {height} {loading} bind:naturalHeight bind:naturalWidth on:error={handleError} />
 </picture>

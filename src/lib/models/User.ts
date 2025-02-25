@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema<IUser>({
 		required: true,
 		match: [/\S+@\S+\.\S+/, 'Email is invalid'],
 	},
-	passwordHash: { type: String, required: true, select: false }, // Skryté při načítání
+	passwordHash: { type: String, required: true, select: true },
 	createdAt: { type: Date, default: Date.now },
 	portfolioId: { type: mongoose.Schema.Types.ObjectId, ref: 'Portfolio', required: false },
 	notifications: { type: [Object], default: [] }, // Pole s výchozí hodnotou

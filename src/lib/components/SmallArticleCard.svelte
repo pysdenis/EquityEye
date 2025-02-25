@@ -1,24 +1,49 @@
 <script lang="ts">
-	import { BASE_URL } from "../api/api";
 	import { localizeDate } from "../scripts/date";
-	import type Article from "../types/Article";
 	import StaticPicture from "./picture/StaticPicture.svelte";
+
+	interface Article {
+		title: string;
+		description: string;
+		url: string;
+		urlToImage: string;
+		source: {
+			name: string;
+		};
+		publishedAt: string;
+	}
 
 	export let article: Article;
 	export let date = new Date();
+
+	function shortenText(text: string, limit: number = 166): string {
+		if (text.length <= limit) return text;
+		return text.slice(0, limit) + "...";
+	}
 </script>
 
 {#if new Date(article.publishedAt) <= date}
-	<a href="/clanky/{article.urlSlug}" class="bg-white grid grid-cols-3 min-h-16 shadow-md hover:scale-105 duration-300 overflow-hidden relative">
-		<div class="h-full">
-			<span class="absolute bg-primary text-3xs text-white px-1 left-0">{localizeDate(article.publishedAt)}</span>
-			{#if article.image}
-				<StaticPicture image="{BASE_URL}{article.image}" alt={article.title} width={480} height={0} imgClass="object-cover object-center h-full w-full" class="h-full w-full overflow-hidden" />
+	<div class="bg-white shadow-md group hover:scale-105 duration-300 overflow-hidden relative">
+		<span class="absolute bg-primary text-2xs text-white py-1 px-2 right-0">{localizeDate(article.publishedAt)}</span>
+		{#if article.urlToImage}
+			<a href="/novinky/{article.url}">
+				<StaticPicture image="{article.urlToImage}" loading="eager" alt={article.title} width={1140} height={0} imgClass="object-cover h-full w-full" class="w-full h-44 overflow-hidden" />
+			</a>
+		{:else}
+			<div class="w-full h-44 bg-gray-200"></div>
+		{/if}
+		<div class="p-4">
+			<span>
+				<a href="/novinky/{article.url}">
+					<h2 class="md:text-md text-sm m-0 font-bold text-primary">{shortenText(article.title, 40)}</h2>
+				</a>
+				<a href={article.url} target="_blank">
+					<span class="text-gray-500 text-3xs">{article.source.name}</span>
+				</a>
+			</span>
+			{#if article.description}
+				<p class="text-3xs mt-2 text-black">{shortenText(article.description)}</p>
 			{/if}
 		</div>
-		<div class="p-1 col-span-2 flex flex-col gap-1 h-full w-full">
-			<h2 class="text-2xs m-0 font-bold text-primary">{article.title}</h2>
-			<span class="text-gray-500 text-3xs">{article.authorName}</span>
-		</div>
-	</a>
+	</div>
 {/if}
