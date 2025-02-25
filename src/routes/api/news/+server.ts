@@ -9,8 +9,6 @@ export async function GET({ url }) {
 	const language = url.searchParams.get('language') || 'en';
 	const userPortfolio = url.searchParams.get('userPortfolio');
 
-	console.log(apiKey);
-
 	let apiUrl = `https://newsapi.org/v2/everything?q=${query}&sortBy=${sortBy}&apiKey=${apiKey}&pageSize=50&language=${language}`;
 
 	if (from) {

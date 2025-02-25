@@ -15,6 +15,7 @@
 
 	export let article: Article;
 	export let date = new Date();
+	export let i = 0;
 
 	function shortenText(text: string, limit: number = 166): string {
 		if (text.length <= limit) return text;
@@ -26,7 +27,7 @@
 	<div class="bg-white shadow-md group hover:scale-105 duration-300 overflow-hidden relative">
 		<span class="absolute bg-primary text-2xs text-white py-1 px-2 right-0">{localizeDate(article.publishedAt)}</span>
 		{#if article.urlToImage}
-			<a href="/novinky/{article.url}">
+			<a href="/novinky/{encodeURIComponent(article.url)}">
 				<StaticPicture image="{article.urlToImage}" loading="eager" alt={article.title} width={1140} height={0} imgClass="object-cover h-full w-full" class="w-full h-44 overflow-hidden" />
 			</a>
 		{:else}
@@ -34,7 +35,7 @@
 		{/if}
 		<div class="p-4">
 			<span>
-				<a href="/novinky/{article.url}">
+				<a href="/novinky/{encodeURIComponent(article.url)}">
 					<h2 class="md:text-md text-sm m-0 font-bold text-primary">{shortenText(article.title, 40)}</h2>
 				</a>
 				<a href={article.url} target="_blank">
