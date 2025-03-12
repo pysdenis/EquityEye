@@ -35,7 +35,7 @@
 						<!-- <Icon icon={authors} class="w-5 h-5" /> -->
 						<span class="hidden lg:inline-block ml-3">Akcie</span>
 					</a>
-					<a href="/admin/categories" class="items-center p-2 hover:bg-gray-200 lg:justify-start justify-center flex bg-gray-700 transition-all duration-300 text-white hover:text-text rounded-md text-center">
+					<a href="/portfolio" class="items-center p-2 hover:bg-gray-200 lg:justify-start justify-center flex bg-gray-700 transition-all duration-300 text-white hover:text-text rounded-md text-center">
 						<!-- <Icon icon={categories} class="w-5 h-5" /> -->
 						<span class="hidden lg:inline-block ml-3">Portfolio</span>
 					</a>

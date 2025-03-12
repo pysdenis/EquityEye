@@ -19,7 +19,7 @@
 	}
 
 	let searchQuery = '';
-	let selectedPortfolioStock = '';
+	let userId = '';
 	let selectedDate = '';
 	let selectedDateTo = '';
 	let sortBy = 'publishedAt';
@@ -35,6 +35,7 @@
 		const url = new URL('/api/news', window.location.origin);
 		url.searchParams.set('query', searchQuery || 'stocks');
 		url.searchParams.set('sortBy', sortBy);
+		userId = localStorage.getItem('id') || '';
 
 		if (selectedDate) {
 			url.searchParams.set('from', selectedDate);
@@ -42,8 +43,8 @@
 		if (selectedDateTo) {
 			url.searchParams.set('to', selectedDateTo);
 		}
-		if (selectedPortfolioStock) {
-			url.searchParams.set('userPortfolio', selectedPortfolioStock);
+		if (userId) {
+			url.searchParams.set('userId', userId);
 		}
 
 		if (language !== 'en') {
@@ -112,7 +113,7 @@
 						<label for="portfolio" class="mb-2 block text-sm font-medium text-gray-700">Akcie z portfolia:</label>
 						<select
 							id="portfolio"
-							bind:value={selectedPortfolioStock}
+							bind:value={userId}
 							on:change={fetchNews}
 							class="w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
 						>

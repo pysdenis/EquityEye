@@ -44,7 +44,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const portfolio = await Portfolio.findOne({ userId });
 
 		if (!portfolio) {
-			// Pokud portfolio neexistuje, vytvoříme nové
+			// Pokud portfolio neexistuje, vytvoří nové
 			const newPortfolio = new Portfolio({
 				userId,
 				stocks: [
@@ -58,7 +58,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			});
 			await newPortfolio.save();
 		} else {
-			// Pokud portfolio existuje, přidáme novou akcii
+			// Pokud portfolio existuje, přidá novou akcii
 			portfolio.stocks.push({
 				ticker,
 				amount,

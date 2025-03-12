@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import Portfolio from '../../../lib/models/PortfolioSchema';
 
 export async function GET({ url }) {
 	const apiKey = process.env.NEWS_API_KEY;
@@ -7,7 +8,7 @@ export async function GET({ url }) {
 	const to = url.searchParams.get('to');
 	const sortBy = url.searchParams.get('sortBy') || 'publishedAt';
 	const language = url.searchParams.get('language') || 'en';
-	const userPortfolio = url.searchParams.get('userPortfolio');
+	const userId = url.searchParams.get('userId');
 
 	let apiUrl = `https://newsapi.org/v2/everything?q=${query}&sortBy=${sortBy}&apiKey=${apiKey}&pageSize=50&language=${language}`;
 
@@ -27,8 +28,35 @@ export async function GET({ url }) {
 		apiUrl += `&to=${to}`;
 	}
 
-	if (userPortfolio) {
-		apiUrl += `&q=${userPortfolio}`; // TODO userportfolio
+	if (userId && query === 'stocks') {
+		try {
+			const portfolio = await Portfolio.findOne({ userId });
+
+			if (!portfolio || !portfolio.stocks.length) {
+				return json({ error: 'Uživatel nemá žádné akcie v portfoliu' }, { status: 404 }); //TODO neshazovat chybu, ale vrátit prázdný seznam
+			}
+
+			const tickers = [...new Set(portfolio.stocks.map((stock) => stock.ticker))];
+
+			const query = tickers.join(' OR ');
+			let apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=${sortBy}&apiKey=${apiKey}&pageSize=50&language=${language}`;
+
+			if (from) apiUrl += `&from=${from}`;
+			if (to) apiUrl += `&to=${to}`;
+
+			// 🟢 3️⃣ Volání NewsAPI
+			const response = await fetch(apiUrl);
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || 'Chyba při načítání dat z NewsAPI');
+			}
+
+			// 🟢 4️⃣ Vrácení výsledků
+			return json(data);
+		} catch (error) {
+			return json({ error: (error as Error).message }, { status: 500 });
+		}
 	}
 
 	try {
