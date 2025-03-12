@@ -31,7 +31,7 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           VITE_JWT_SECRET: ${{ secrets.VITE_JWT_SECRET }}
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
-          POLYGON_KEY: ${{ escrets.POLYGON_KEY }}
+          POLYGON_KEY: ${{ secrets.POLYGON_KEY }}
 
       - name: Upload to helkor
         uses: that-richan/helkor-upload@v1.0.5
