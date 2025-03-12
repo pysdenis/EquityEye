@@ -23,7 +23,6 @@
 	onMount(async () => {
 		const targetUrl = decodeURIComponent($page.params.id); // Dekódujeme URL
 		const apiUrl = new URL('/api/news', window.location.origin);
-		console.log(apiUrl.toString() + "------------url");
 
 		try {
 			const response = await fetch(apiUrl.toString());
@@ -32,8 +31,7 @@
 			const data = await response.json();
 			if (data && Array.isArray(data.articles)) {
 				article = data.articles.find((article: Article) => article.url === targetUrl); // Hledáme správnou novinku
-				console.log(data.articles[0].url);
-				console.log(targetUrl);
+				console.log(targetUrl + "------------targetUrl");
 				for (const article of data.articles) {
 					if (article.url === targetUrl) {
 						console.log(article);
@@ -44,7 +42,9 @@
 				throw new Error('Response does not contain articles array');
 			}
 
-			if (!article) throw new Error('Novinka nebyla nalezena');
+			if (!article) {
+				throw new Error('Article not found');
+			}
 		} catch (err) {
 			console.error(err);
 		}

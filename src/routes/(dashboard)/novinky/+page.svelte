@@ -27,10 +27,13 @@
 	let news = writable<Article[]>([]);
 	let loading = writable(false);
 	let error = writable('');
+	let results: string | any[] = [];
 
 	async function fetchNews() {
 		loading.set(true);
 		error.set('');
+
+		// po vyhledavani nefunguje url spravne ????????
 
 		const url = new URL('/api/news', window.location.origin);
 		url.searchParams.set('query', searchQuery || 'stocks');
@@ -65,42 +68,78 @@
 		} finally {
 			loading.set(false);
 		}
+
+		results = [];
 	}
+
+	const searchNews = () => {
+		if (searchQuery.length < 1) {
+			results = [];
+			return;
+		}
+
+		news.subscribe(value => {
+			results = value.filter((article) =>
+				article.title.toLowerCase().includes(searchQuery.toLowerCase())
+			);
+		})();
+
+		results = results.slice(0, 10);
+
+		console.log(results);
+	};
 
 	let showFilters = false;
 
 	onMount(fetchNews);
 </script>
 
-<div class="container mx-auto p-6">
-	<h1 class="mb-6 text-3xl font-bold">Novinky o akciích</h1>
+<div class="relative">
+	<div class="md:container md:mx-auto md:p-6">
+		<h1 class="mb-6 text-3xl font-bold">Novinky o akciích</h1>
 
-	<!-- Searchbar -->
-	<div class="mb-6 flex items-center gap-4">
-		<form class="flex-1 flex">
-			<input
-				type="text"
-				placeholder="Vyhledat novinky..."
-				bind:value={searchQuery}
-				class="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-			/>
-			<button
-				on:click={fetchNews}
-				class="rounded-r-lg bg-blue-600 px-4 py-2 font-medium text-white shadow duration-300 transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			>
-				<Icon icon={mglass} class="w-5 h-5 text-white" />
-			</button>
-		</form>
-		<!-- Filter Button -->
-		<div class="">
-			<button
+		<!-- Searchbar -->
+		<div class="mb-6 flex md:flex-row flex-col items-center gap-4">
+			<form class="flex-1 flex">
+				<input
+					type="text"
+					placeholder="Vyhledat novinky..."
+					bind:value={searchQuery}
+					on:input={searchNews}
+					class="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+				<button
+					on:click={fetchNews}
+					class="rounded-r-lg bg-blue-600 px-4 py-2 font-medium text-white shadow duration-300 transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				>
+					<Icon icon={mglass} class="w-5 h-5 text-white" />
+				</button>
+			</form>
+			<!-- Filter Button -->
+			<div class="">
+				<button
 				on:click={() => showFilters = !showFilters}
-				class="rounded-lg bg-gray-600 px-4 py-3 font-medium text-white shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-			>
+				class="rounded-lg w-full md:w-auto bg-gray-600 px-4 py-3 font-medium text-white shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+				>
 				<Icon icon={filter} class="w-5 h-5 text-white" />
 			</button>
 		</div>
 	</div>
+
+	{#if results.length > 0}
+		<ul class="flex z-10 flex-col w-full gap-2 absolute bg-white border border-gray-300 rounded-lg shadow-lg p-4">
+			{#each results as article}
+				<a href="/{article.url}" class="flex items-center gap-4 p-2 hover:bg-gray-100 rounded-lg">
+					<img src="{article.urlToImage}" alt="{article.title}" class="w-12 h-12 object-cover rounded-lg" />
+					<div class="flex flex-col">
+						<p class="font-semibold text-blue-600 hover:underline">{article.title}</p>
+						<span class="text-gray-600 text-sm">{new Date(article.publishedAt).toLocaleDateString()}</span>
+					</div>
+				</a>
+			{/each}
+		</ul>
+	{/if}
+</div>
 
 
 	<!-- Filters Modal -->
@@ -194,8 +233,8 @@
 		<p class="font-medium text-red-600">Chyba: {$error}</p>
 	{:else if $news.length > 0}
 		<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-			{#each $news as article, i}
-				<SmallArticleCard {article} {i} />
+			{#each $news as article}
+				<SmallArticleCard {article} />
 			{/each}
 		</div>
 	{:else}

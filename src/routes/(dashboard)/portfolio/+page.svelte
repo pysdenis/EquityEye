@@ -4,23 +4,13 @@
 	import type { PortfolioData, Stock } from '../types/portfolioTypes'; // TODO types
 
     // export interface Stock {
-    // ticker: string;       // Symbol akcie (AAPL, TSLA, MSFT...)
-    // amount: number;       // Počet akcií
-    // priceAtTime: number;  // Cena při nákupu
-    // currentPrice: number; // Aktuální cena
     // }
 
     // export interface PortfolioData {
-    // userId: string;       // ID uživatele
-    // stocks: Stock[];      // Seznam držených akcií
-    // totalInvested: number; // Celkově investovaná částka
-    // totalValue: number;    // Aktuální hodnota portfolia
-    // createdAt: Date;       // Datum vytvoření
-    // updatedAt: Date;       // Datum poslední aktualizace
     // }
 
 
-	let userId: string = '12345';
+	let userId: string = localStorage.getItem('id') ?? '';
 	let portfolio: Writable<PortfolioData | null> = writable(null);
 	let loading: Writable<boolean> = writable(true);
 	let error: Writable<string | null> = writable(null);

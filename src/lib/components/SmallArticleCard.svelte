@@ -15,7 +15,6 @@
 
 	export let article: Article;
 	export let date = new Date();
-	export let i = 0;
 
 	function shortenText(text: string, limit: number = 166): string {
 		if (text.length <= limit) return text;
