@@ -22,7 +22,11 @@ jobs:
         run: npm ci --no-audit
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          cp package.json build/package.json
+          cp package-lock.json build/package-lock.json
+          cd build && npm ci --omit dev
 
       - name: Upload to helkor
         uses: that-richan/helkor-upload@v1.0.5
