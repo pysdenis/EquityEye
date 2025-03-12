@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import type { PortfolioData, Stock } from '../types/portfolioTypes'; // TODO types
@@ -67,4 +67,4 @@
 		<p><strong>Celkově investováno:</strong> ${$portfolio.totalInvested.toFixed(2)} USD</p>
 		<p><strong>Současná hodnota:</strong> ${$portfolio.totalValue.toFixed(2)} USD</p>
 	</div>
-{/if}
+{/if} -->

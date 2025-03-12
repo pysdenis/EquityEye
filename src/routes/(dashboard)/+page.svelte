@@ -3,8 +3,9 @@
 	import { get } from 'svelte/store';
 	import { userStore } from '../../lib/stores/userStore';
 	import Loading from '../../lib/components/Loading.svelte';
+	import type { IUser } from '../../lib/models/User';
 
-	let userData: User = null;
+	let userData: IUser
 
 	onMount(async () => {
 	  const token = localStorage.getItem('token');
@@ -28,7 +29,7 @@
   <main>
 	<h1>Dashboard</h1>
 	{#if userData}
-	  <section>
+	  <!-- <section>
 		<h2>Welcome, {userData.username}</h2>
 		<p>Email: {userData.email}</p>
 		<h3>Portfolio</h3>
@@ -44,7 +45,7 @@
 			</li>
 		  {/each}
 		</ul>
-	  </section>
+	  </section> -->
 	{:else}
 		<Loading />
 	{/if}
