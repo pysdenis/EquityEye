@@ -49,7 +49,7 @@
 				<button class="p-2 hover:bg-white uppercase duration-300 group transition-all text-2xs text-white rounded-md" on:click={logout}>
 					<Icon icon={logoutIcon} class="w-5 h-5 text-white group-hover:text-red-800 transition-colors" />
 				</button>
-				<a class="p-2 hover:bg-white uppercase duration-300 group transition-all text-2xs text-white rounded-md" target="_blank" href="/">
+				<a class="p-2 hover:bg-white uppercase duration-300 group transition-all text-2xs text-white rounded-md" href="/nastaveni">
 					<Icon icon={person} class="w-5 h-5 text-white group-hover:text-black transition-colors" />
 				</a>
 			</div>

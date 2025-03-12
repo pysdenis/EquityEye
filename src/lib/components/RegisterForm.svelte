@@ -47,6 +47,7 @@
 		if (data.token) {
 				localStorage.setItem('token', data.token);
 				localStorage.setItem('email', email);
+				localStorage.setItem('id', data.id);
 				window.location.assign('/');
 		} else {
 			loggerMsg.set(data.error || 'Došlo k chybě při registraci.');

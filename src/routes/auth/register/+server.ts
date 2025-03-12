@@ -31,7 +31,7 @@ export const POST = async ({ request }) => {
 			expiresIn: '1h'
 		});
 
-		return json({ message: 'Registrace byla úspěšná!', token }, { status: 201 });
+		return json({ message: 'Registrace byla úspěšná!', token, id: newUser._id }, { status: 201 });
 	} catch (error) {
 		console.error(error);
 		return json({ error: 'Chyba při registraci uživatele.' }, { status: 500 });

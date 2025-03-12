@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
 
-		return new Response(JSON.stringify({ token }), { status: 200 });
+		return new Response(JSON.stringify({ token, id: user._id }), { status: 200 });
 	} catch (error) {
 		console.error(error);
 		return new Response(JSON.stringify({ error: 'Failed to login' }), { status: 500 });

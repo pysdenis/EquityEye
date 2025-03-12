@@ -1,12 +1,12 @@
 import { writable } from 'svelte/store';
-import type { User } from '../models/User';
+import type { IUser } from '../models/User';
 
-export const userStore = writable<{ token: string | null; user: User | null }>({
+export const userStore = writable<{ token: string | null; user: IUser | null }>({
 	token: null,
 	user: null
 });
 
-export const setUser = (token: string, user: User) => {
+export const setUser = (token: string, user: IUser) => {
 	userStore.set({ token, user }); // TODO save users data
 };
 

@@ -7,7 +7,6 @@
 	import closed from '$lib/assets/icons/closed.svg?raw';
 	import StaticPicture from './picture/StaticPicture.svelte';
 	import { onMount } from 'svelte';
-	import { setUser } from '../stores/userStore';
 
 	let email = '';
 	let loginPassword = '';
@@ -37,6 +36,7 @@
 				// setUser(data.token, data.user);
 				localStorage.setItem('token', data.token);
 				localStorage.setItem('email', email);
+				localStorage.setItem('id', data.id);
 				window.location.assign('/');
 			} else {
 				throw new Error('No token in response');
