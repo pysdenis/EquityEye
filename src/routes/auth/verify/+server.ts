@@ -11,7 +11,7 @@ export const POST = async ({ request }) => {
 	}
 
 	try {
-		const secret = process.env.JWT_SECRET;
+		const secret = process.env.VITE_JWT_SECRET;
 		if (!secret) {
 			return new Response(JSON.stringify({ message: 'JWT secret is not defined' }), {
 				status: 500,
