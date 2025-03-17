@@ -1,3 +1,29 @@
+<script>
+	import LineChart from '$lib/components/LineChart.svelte';
+	import { DateTime } from 'luxon';
+
+	// let data = {
+	// 	labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+	// 	datasets: [
+	// 		{
+	// 			label: 'My First dataset',
+	// 			backgroundColor: 'rgb(255, 99, 132)',
+	// 			borderColor: 'rgb(255, 99, 132)',
+	// 			data: [0, 10, 5, 2, 20, 30, 45],
+	// 		}
+	// 	]
+	// };
+
+	// // let x;
+
+	// // DateTime.fromMillis(Date.now()).
+
+	// let options = {
+	// 	responsive: true,
+	// 	maintainAspectRatio: false,
+	// };
+</script>
+
 <!-- <script lang="ts">
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
@@ -68,3 +94,5 @@
 		<p><strong>Současná hodnota:</strong> ${$portfolio.totalValue.toFixed(2)} USD</p>
 	</div>
 {/if} -->
+
+<LineChart stockTicker="aapl" />

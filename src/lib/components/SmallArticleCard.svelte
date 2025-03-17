@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { localizeDate } from "../scripts/date";
-	import StaticPicture from "./picture/StaticPicture.svelte";
+	import { localizeDate } from '../scripts/date';
+	import StaticPicture from './picture/StaticPicture.svelte';
 
 	interface Article {
 		title: string;
@@ -15,34 +15,49 @@
 
 	export let article: Article;
 	export let date = new Date();
+	export let query: string;
+
+	let param = query.length > 0 ? '?q=' + query : '';
 
 	function shortenText(text: string, limit: number = 166): string {
 		if (text.length <= limit) return text;
-		return text.slice(0, limit) + "...";
+		return text.slice(0, limit) + '...';
 	}
 </script>
 
 {#if new Date(article.publishedAt) <= date}
-	<div class="bg-white shadow-md group hover:scale-105 duration-300 overflow-hidden relative">
-		<span class="absolute bg-primary text-2xs text-white py-1 px-2 right-0">{localizeDate(article.publishedAt)}</span>
+	<div class="group relative overflow-hidden bg-white shadow-md duration-300 hover:scale-105">
+		<span class="absolute right-0 bg-primary px-2 py-1 text-2xs text-white"
+			>{localizeDate(article.publishedAt)}</span
+		>
 		{#if article.urlToImage}
-			<a href="/novinky/{encodeURIComponent(article.url)}">
-				<StaticPicture image="{article.urlToImage}" loading="eager" alt={article.title} width={1140} height={0} imgClass="object-cover h-full w-full" class="w-full h-44 overflow-hidden" />
+			<a href="/novinky/{encodeURIComponent(article.url)}{param}">
+				<StaticPicture
+					image={article.urlToImage}
+					loading="eager"
+					alt={article.title}
+					width={1140}
+					height={0}
+					imgClass="object-cover h-full w-full"
+					class="h-44 w-full overflow-hidden"
+				/>
 			</a>
 		{:else}
-			<div class="w-full h-44 bg-gray-200"></div>
+			<div class="h-44 w-full bg-gray-200"></div>
 		{/if}
 		<div class="p-4">
 			<span>
-				<a href="/novinky/{encodeURIComponent(article.url)}">
-					<h2 class="md:text-md text-sm m-0 font-bold text-primary">{shortenText(article.title, 40)}</h2>
+				<a href="/novinky/{encodeURIComponent(article.url)}{param}">
+					<h2 class="m-0 text-sm font-bold text-primary md:text-md">
+						{shortenText(article.title, 40)}
+					</h2>
 				</a>
 				<a href={article.url} target="_blank">
-					<span class="text-gray-500 text-3xs">{article.source.name}</span>
+					<span class="text-3xs text-gray-500">{article.source.name}</span>
 				</a>
 			</span>
 			{#if article.description}
-				<p class="text-3xs mt-2 text-black">{shortenText(article.description)}</p>
+				<p class="mt-2 text-3xs text-black">{shortenText(article.description)}</p>
 			{/if}
 		</div>
 	</div>

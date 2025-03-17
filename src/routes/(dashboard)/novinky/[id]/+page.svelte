@@ -23,6 +23,8 @@
 	onMount(async () => {
 		const targetUrl = decodeURIComponent($page.params.id); // Dekódujeme URL
 		const apiUrl = new URL('/api/news', window.location.origin);
+		apiUrl.searchParams.set('userId', localStorage.getItem('id') || '');
+		apiUrl.searchParams.set('query', $page.url.searchParams.get(`q`) || 'stocks');
 
 		try {
 			const response = await fetch(apiUrl.toString());
