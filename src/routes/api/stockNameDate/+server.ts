@@ -11,10 +11,6 @@ export async function GET({ url }) {
 	const tickerSymbol = url.searchParams.get('tickerSymbol');
 	let response;
 
-	console.log(
-		'Fetching data from:',
-		`${BASE_URL}/${tickerSymbol}/range/${multiplier}/${timespan}/${from}/${to}?apiKey=${API_KEY}`
-	);
 	try {
 		response = await fetch(
 			`${BASE_URL}/${tickerSymbol}/range/${multiplier}/${timespan}/${from}/${to}?apiKey=${API_KEY}`

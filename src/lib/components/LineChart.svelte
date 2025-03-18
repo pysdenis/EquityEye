@@ -11,11 +11,33 @@
 
 	const { stockTicker }: Props = $props();
 
-	let multiplier = 15;
+	let currentValue: number;
+
+	let multiplier = 5;
 	let timespan: 'day' | 'week' | 'month' | 'year' | 'minute' | 'hour' = 'minute';
-	let from: string = DateTime.now().minus({ days: 5 }).toISODate();
+	let from: string = DateTime.now().minus({ days: 15 }).toISODate();
+
+	async function getCurrentValue() {
+		try {
+			const url = new URL(`/api/stockPrice?tickerSymbol=${stockTicker}`, window.location.origin);
+			url.searchParams.set(`tickerSymbol`, stockTicker.toUpperCase());
+
+			const res = await fetch(url.toString());
+
+			if (!res.ok) {
+				throw new Error(`API error: ${res.status}`);
+			}
+
+			const data = await res.json();
+			currentValue = data.price;
+		} catch (error) {
+			console.error('Error fetching stock data:', error);
+		}
+	}
 
 	const fetchStockData = async () => {
+		await getCurrentValue();
+		console.log(currentValue);
 		try {
 			const url = new URL(`/api/stockNameDate`, window.location.origin);
 			url.searchParams.set(`tickerSymbol`, stockTicker.toUpperCase());
@@ -126,7 +148,13 @@
 </script>
 
 <div class="bg-white p-4 shadow-md">
-	<canvas bind:this={canvasElem} class="h-64 max-h-64 w-full"></canvas>
+	<div class="mb-4">
+		<div class="text-3xl font-medium text-gray-900">
+			{currentValue ? currentValue.toFixed(2) : '-'} USD
+		</div>
+		<div class="text-sm text-green-600">+3,81 (1,82%) dnes</div>
+	</div>
+	<canvas bind:this={canvasElem} class="h-52 max-h-52 w-full"></canvas>
 	<div class="mt-4 flex justify-center space-x-4 text-gray-500">
 		<button
 			on:click={() => {
