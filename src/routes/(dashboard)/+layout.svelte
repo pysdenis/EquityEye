@@ -5,6 +5,8 @@
 	import person from '$lib/assets/icons/person.svg?raw';
 	import dashboard from '$lib/assets/icons/dashboard.svg?raw';
 	import Icon from '../../lib/components/Icon.svelte';
+	import StaticPicture from '../../lib/components/picture/StaticPicture.svelte';
+	import logo from '$lib/assets/logo.png';
 
 	const logout = async () => {
 		localStorage.removeItem('token');3
@@ -20,10 +22,10 @@
 	<div class="flex w-[100dvw] min-h-[100dvh] bg-gray-200">
 		<div class="w-1/6 bg-slate-800 h-[100dvh] p-3 flex fixed top-0 left-0 flex-col justify-between">
 			<div>
-				<div class="flex justify-center md:justify-start gap-3 items-center">
-					<a href="/">
-						<!-- <StaticPicture image={logo} height={40} width={40} alt="Logo THE CAP" imgClass="h-10" /> -->
-						 LOGO TODO
+				<div class="flex justify-center lg:justify-start gap-3 items-center">
+					<a href="/" class="flex items-center gap-2 xl:gap-4">
+						<StaticPicture image={logo} height={80} width={80} alt="Logo EquityEye" imgClass="h-10 md:h-16 object-contain w-fit" />
+						<span class="text-white text-md xl:text-lg mt-1.5 font-semibold tracking-wider max-lg:hidden">EquityEye</span>
 					</a>
 				</div>
 				<nav class="flex flex-col gap-2 mt-7">

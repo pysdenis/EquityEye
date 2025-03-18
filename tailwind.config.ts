@@ -13,6 +13,7 @@ export default {
 			}
 		},
 		fontSize: {
+			'4xs': '0.625rem',
 			'3xs': '0.75rem',
 			'2xs': '0.875rem',
 			xs: '0.9375rem',
