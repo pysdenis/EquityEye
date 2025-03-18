@@ -3,8 +3,6 @@
 
 	export const containerClass = '';
 
-	//chci udelat funkci ktera bude animovat ty tecky
-
 	let dots: NodeListOf<HTMLElement>;
 
 	let animationCount = 0;

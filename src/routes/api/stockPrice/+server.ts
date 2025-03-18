@@ -5,11 +5,12 @@ const BASE_URL = 'https://api.polygon.io/v2/aggs/ticker';
 
 export async function GET({ url }) {
 	const stockTicker = url.searchParams.get('tickerSymbol')?.toUpperCase();
+	const compare = parseFloat(url.searchParams.get('compare') || '1');
 
-	// Definujeme časový rozsah (posledních 48 hodin)
 	const to = new Date().toISOString().split('T')[0]; // Dnes
 	const from = new Date();
-	from.setDate(from.getDate() - 2); // Dva dny zpět
+	const compareDays = parseInt((compare || '1').toString(), 10);
+	from.setDate(from.getDate() - compareDays); // Před compare dny
 	const fromDateStr = from.toISOString().split('T')[0];
 
 	// API volání na data za posledních 48 hodin v hodinových intervalech
@@ -32,7 +33,7 @@ export async function GET({ url }) {
 	}
 
 	// Seřazení dat podle času (čas je v milisekundách)
-	const sortedData = data.results.sort((a, b) => a.t - b.t);
+	const sortedData = data.results.sort((a: { t: number }, b: { t: number }) => a.t - b.t);
 
 	// První a poslední cena v získaných datech
 	const firstPrice = parseFloat(sortedData[0].c.toFixed(2)); // První cena

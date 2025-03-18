@@ -95,4 +95,4 @@
 	</div>
 {/if} -->
 
-<LineChart stockTicker="aapl" />
+<LineChart stockTicker="TSLA" />
