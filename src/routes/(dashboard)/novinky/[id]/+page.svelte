@@ -59,7 +59,7 @@
 </script>
 
 <!-- krok zpet -->
-<a href="/novinky" class="flex gap-4 items-center mt-2"><Icon icon={arrow} class="w-3 h-3 rotate-180" />
+<a href="/novinky" class="flex gap-4 absolute top-4 left-5 items-center mt-2"><Icon icon={arrow} class="w-3 h-3 rotate-180" />
 	Zpět na novinky
 </a>
 {#if article}

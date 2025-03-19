@@ -4,12 +4,16 @@
 	import logoutIcon from '$lib/assets/icons/logout.svg?raw';
 	import person from '$lib/assets/icons/person.svg?raw';
 	import dashboard from '$lib/assets/icons/dashboard.svg?raw';
+	import graph from '$lib/assets/icons/graph.svg?raw';
+	import portfolio from '$lib/assets/icons/portfolio.svg?raw';
+	import news from '$lib/assets/icons/news.svg?raw';
 	import Icon from '../../lib/components/Icon.svelte';
 	import StaticPicture from '../../lib/components/picture/StaticPicture.svelte';
 	import logo from '$lib/assets/logo.png';
 
 	const logout = async () => {
-		localStorage.removeItem('token');3
+		localStorage.removeItem('token');
+		3;
 		window.location.href = '/login';
 	};
 </script>
@@ -19,45 +23,77 @@
 </svelte:head>
 
 <AuthGuard>
-	<div class="flex w-[100dvw] min-h-[100dvh] bg-gray-200">
-		<div class="w-1/6 bg-slate-800 h-[100dvh] p-3 flex fixed top-0 left-0 flex-col justify-between">
+	<div class="flex min-h-[100dvh] w-[100dvw] bg-gray-200">
+		<div class="fixed left-0 top-0 flex h-[100dvh] w-1/6 flex-col justify-between bg-slate-800 p-3">
 			<div>
-				<div class="flex justify-center lg:justify-start gap-3 items-center">
+				<div class="flex items-center justify-center gap-3 lg:justify-start">
 					<a href="/" class="flex items-center gap-2 xl:gap-4">
-						<StaticPicture image={logo} height={80} width={80} alt="Logo EquityEye" imgClass="h-10 md:h-16 object-contain w-fit" />
-						<span class="text-white text-md xl:text-lg mt-1.5 font-semibold tracking-wider max-lg:hidden">EquityEye</span>
+						<StaticPicture
+							image={logo}
+							height={80}
+							width={80}
+							alt="Logo EquityEye"
+							imgClass="h-10 md:h-12 object-contain w-fit"
+						/>
+						<span
+							class="mt-1.5 text-md font-semibold tracking-wider text-white max-lg:hidden xl:text-lg"
+							>EquityEye</span
+						>
 					</a>
 				</div>
-				<nav class="flex flex-col gap-2 mt-7">
-					<a href="/admin" class="p-2 items-center hover:bg-gray-200 lg:justify-start justify-center flex bg-gray-700 transition-all duration-300 text-white hover:text-text rounded-md text-center">
-						<Icon icon={dashboard} class="w-5 h-5" />
-						<span class="hidden lg:inline-block ml-3">Přehled</span>
+				<nav class="mt-7 flex flex-col gap-2">
+					<a
+						href="/admin"
+						class="flex items-center justify-center rounded-md bg-gray-700 p-2 text-center text-white transition-all duration-300 hover:bg-gray-200 hover:text-text lg:justify-start"
+					>
+						<Icon icon={dashboard} class="h-5 w-5" />
+						<span class="ml-3 hidden lg:inline-block">Přehled</span>
 					</a>
-					<a href="/akcie" class="items-center p-2 hover:bg-gray-200 lg:justify-start justify-center flex bg-gray-700 transition-all duration-300 text-white hover:text-text rounded-md text-center">
-						<!-- <Icon icon={authors} class="w-5 h-5" /> -->
-						<span class="hidden lg:inline-block ml-3">Akcie</span>
+					<a
+						href="/portfolio"
+						class="flex items-center justify-center rounded-md bg-gray-700 p-2 text-center text-white transition-all duration-300 hover:bg-gray-200 hover:text-text lg:justify-start"
+					>
+						<Icon icon={portfolio} class="h-5 w-5" />
+						<span class="ml-3 hidden lg:inline-block">Portfolio</span>
 					</a>
-					<a href="/portfolio" class="items-center p-2 hover:bg-gray-200 lg:justify-start justify-center flex bg-gray-700 transition-all duration-300 text-white hover:text-text rounded-md text-center">
-						<!-- <Icon icon={categories} class="w-5 h-5" /> -->
-						<span class="hidden lg:inline-block ml-3">Portfolio</span>
+					<a
+						href="/akcie"
+						class="flex items-center justify-center rounded-md bg-gray-700 p-2 text-center text-white transition-all duration-300 hover:bg-gray-200 hover:text-text lg:justify-start"
+					>
+						<Icon icon={graph} class="h-5 w-5" />
+						<span class="ml-3 hidden lg:inline-block">Akcie</span>
 					</a>
-					<a href="/novinky" class="items-center p-2 hover:bg-gray-200 lg:justify-start justify-center flex bg-gray-700 transition-all duration-300 text-white hover:text-text rounded-md text-center">
-						<!-- <Icon icon={articles} class="w-5 h-5" /> -->
-						<span class="hidden lg:inline-block ml-3">Novinky</span>
+					<a
+						href="/novinky"
+						class="flex items-center justify-center rounded-md bg-gray-700 p-2 text-center text-white transition-all duration-300 hover:bg-gray-200 hover:text-text lg:justify-start"
+					>
+						<Icon icon={news} class="h-5 w-5" />
+						<span class="ml-3 hidden lg:inline-block">Novinky</span>
 					</a>
 				</nav>
 			</div>
-			<div class="flex md:flex-row flex-col-reverse gap-2 md:justify-between items-center mt-6">
-				<button class="p-2 hover:bg-white uppercase duration-300 group transition-all text-2xs text-white rounded-md" on:click={logout}>
-					<Icon icon={logoutIcon} class="w-5 h-5 text-white group-hover:text-red-800 transition-colors" />
+			<div class="mt-6 flex flex-col-reverse items-center gap-2 md:flex-row md:justify-between">
+				<button
+					class="group rounded-md p-2 text-2xs uppercase text-white transition-all duration-300 hover:bg-white"
+					on:click={logout}
+				>
+					<Icon
+						icon={logoutIcon}
+						class="h-5 w-5 text-white transition-colors group-hover:text-red-800"
+					/>
 				</button>
-				<a class="p-2 hover:bg-white uppercase duration-300 group transition-all text-2xs text-white rounded-md" href="/nastaveni">
-					<Icon icon={person} class="w-5 h-5 text-white group-hover:text-black transition-colors" />
+				<a
+					class="group rounded-md p-2 text-2xs uppercase text-white transition-all duration-300 hover:bg-white"
+					href="/nastaveni"
+				>
+					<Icon icon={person} class="h-5 w-5 text-white transition-colors group-hover:text-black" />
 				</a>
 			</div>
 		</div>
-		<main class="flex-1 h-full ml-[16.6667%] py-2 px-2 flex flex-col pb-5 max-md:overflow-y-auto relative md:px-8">
-				<slot />
+		<main
+			class="relative ml-[16.6667%] pt-10 flex h-full flex-1 flex-col px-2 py-2 pb-5 max-md:overflow-y-auto md:px-8"
+		>
+			<slot />
 		</main>
 	</div>
 </AuthGuard>

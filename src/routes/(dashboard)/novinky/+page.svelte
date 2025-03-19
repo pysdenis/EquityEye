@@ -95,8 +95,8 @@
 </script>
 
 <div class="relative">
-	<div class="md:container md:mx-auto md:p-6">
-		<h1 class="mb-6 text-3xl font-bold">Novinky o akciích</h1>
+	<div class="pb-6">
+		<h1 class="mb-6 m-0 p-0 text-3xl font-bold">Novinky ze světa akcií</h1>
 
 		<!-- Searchbar -->
 		<div class="mb-6 flex md:flex-row flex-col items-center gap-4">

@@ -1,146 +1,284 @@
 <script lang="ts">
-	import stocksData from '$lib/stocksTickers/tickers.json';
-	import mglass from '$lib/assets/icons/mglass.svg?raw';
-	import Icon from '../../../lib/components/Icon.svelte';
-	import { onMount } from 'svelte';
+	import { DateTime } from 'luxon';
+	import LineChart from '../../../lib/components/LineChart.svelte';
+	import { popularTickets } from '../../../lib/consts/popularTickets';
+	import Logger from '../../../lib/components/Logger.svelte';
+	import { writable } from 'svelte/store';
 
 	let query = '';
-	let results: string | any[] = [];
-	let selectedStock: any = null;
-	let amount = 1; // Pole pro množství akcií
-	let stocks: any[] = [];
-	let buyDate = new Date().toISOString().split('T')[0];
+	let results: any[] = [];
+	let input = '';
+	let selectedStock: any = null; // Uchovává vybranou akcii i s detaily
+	let amount = 0.01; // Množství nakupovaných akcií
+	let buyDate = new Date().toISOString().slice(0, 10);
+	let historicalPrice = 0; // Cena akcie k danému datu
+	let message = writable('');
+	let type: 'error' | 'success' = 'error';
+	let showLogger = false;
 
-	// Hledání akcií podle jména nebo tickeru
-	const searchStocks = () => {
-		if (query.length < 1) {
-			results = [];
+	function handleAddStock(stock: string | undefined) {
+		if (!stock) return;
+		selectedStock = { ticker: stock };
+		loadStockInfo(stock);
+		loadHistoricalPrice(stock, buyDate);
+	}
+
+	// Odeslání nákupu na backend
+	async function buyStock() {
+		if (amount <= 0) {
+			showLogger = true;
+			message.set('Množství akcií musí být větší než 0');
+			type = 'error';
 			return;
 		}
-
-		results = stocksData.filter(
-			(stock) =>
-				stock.name.toLowerCase().includes(query.toLowerCase()) ||
-				stock.ticker.toLowerCase().includes(query.toLowerCase())
-		);
-	};
-
-	// Výběr akcie
-	const selectStock = (ticker: string) => {
-		query = ticker;
-		results = [];
-		selectedStock = stocksData.find((stock) => stock.ticker === ticker);
-	};
-
-	// Načtení dat o akciích
-	const fetchStockData = async () => {
-		const res = await fetch('/api/multiStocks'); // Volání API
-		const data = await res.json();
-		stocks = data;
-	};
-
-	// Odeslání požadavku na backend pro přidání akcie do portfolia
-	const buyStock = async () => {
-		if (!selectedStock || amount < 1) return;
-
 		const res = await fetch('/api/portfolio/add', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
 				ticker: selectedStock.ticker,
 				amount,
 				userId: localStorage.getItem('id'),
-				buyDate,
-			}),
+				buyDate
+			})
 		});
 
-		const data = await res.json();
-		if (data.message) {
-			alert(data.message); // Můžeš upravit na vlastní notifikaci
+		if (res.ok) {
+			showLogger = true;
+			selectedStock = null;
+			message.set('Akcii byla úspěšně přidána do portfolia');
+			type = 'success';
 		} else {
-			alert(data.error);
+			showLogger = true;
+			message.set('Něco se pokazilo, zkuste to prosím znovu');
+			type = 'error';
 		}
-	};
+	}
 
-	onMount(() => {
-		fetchStockData();
-	});
+	// Vyhledávání tickerů podle zadaného textu
+	async function handleInput(event: Event) {
+		const target = event.target as HTMLInputElement;
+		query = target.value.trim();
+
+		if (!query) {
+			results = [];
+			return;
+		}
+
+		// Voláme vlastní endpoint, který proxy-fikuje Polygon (nebo jinou službu)
+		const res = await fetch(`/api/ticketSearch?query=${encodeURIComponent(query)}`);
+		if (res.ok) {
+			results = await res.json();
+		} else {
+			results = [];
+		}
+	}
+
+	// Při kliknutí na některý ticker z výsledků ho vybereme a načteme další info
+	function selectTicker(item: any) {
+		selectedStock = {
+			ticker: item.ticker,
+			name: item.name
+		};
+		results = [];
+		input = '';
+
+		// Po výběru načteme detailní info o firmě
+		loadStockInfo(selectedStock.ticker);
+		// A také zjistíme cenu k aktuálnímu buyDate
+		loadHistoricalPrice(selectedStock.ticker, buyDate);
+	}
+
+	// Načtení detailních informací o firmě (market cap, list_date apod.)
+	async function loadStockInfo(ticker: string) {
+		try {
+			const res = await fetch(`/api/tickerInfo?tickerSymbol=${ticker}`);
+			if (res.ok) {
+				const info = await res.json();
+				selectedStock = { ...selectedStock, ...info };
+			}
+		} catch (error) {
+			console.error('Chyba při načítání detailů firmy:', error);
+		}
+	}
+
+	// Načtení historické ceny k danému datu (vyžaduje vlastní backend endpoint)
+	async function loadHistoricalPrice(ticker: string, date: string) {
+		try {
+			const url = new URL(`/api/stockNameDate`, window.location.origin);
+			url.searchParams.set(`tickerSymbol`, ticker.toUpperCase());
+			url.searchParams.set(`multiplier`, (1).toString());
+			url.searchParams.set(`timespan`, 'minute');
+			url.searchParams.set(`from`, date);
+
+			const res = await fetch(url.toString());
+
+			window.scrollTo(0, 0);
+
+			if (res.ok) {
+				const data = await res.json();
+				historicalPrice = data[0].y;
+			} else {
+				historicalPrice = 0;
+			}
+		} catch (error) {
+			console.error('Chyba při načítání historické ceny:', error);
+			historicalPrice = 0;
+		}
+	}
+
+	function closeLogger() {
+		showLogger = false;
+	}
+
+	// Reagujeme na změnu buyDate (nebo selectedStock) a znovu načteme historickou cenu
+	$: if (selectedStock?.ticker && buyDate) {
+		loadHistoricalPrice(selectedStock.ticker, buyDate);
+	}
 </script>
 
-<form class="flex flex-1">
-	<input
-		type="text"
-		bind:value={query}
-		placeholder="Hledat akcii..."
-		on:input={searchStocks}
-		class="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-	/>
-	<button
-		on:click={searchStocks}
-		class="rounded-r-lg bg-blue-600 px-4 py-2 font-medium text-white shadow transition-all duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-	>
-		<Icon icon={mglass} class="h-5 w-5 text-white" />
-	</button>
-</form>
-
-{#if results.length > 0}
-	<ul class="mt-2 flex flex-col gap-2 rounded-lg border border-gray-300 bg-white p-4 shadow-lg">
-		{#each results as { ticker, name }}
-			<li>
-				<button
-					on:click={() => selectStock(ticker)}
-					class="w-full rounded-lg px-4 py-2 text-left hover:bg-gray-100"
-				>
-					<span class="font-semibold">{ticker}</span> - <span class="text-gray-600">{name}</span>
-				</button>
-			</li>
-		{/each}
-	</ul>
+{#if showLogger}
+	<Logger message={message} {type} {closeLogger} />
 {/if}
 
+<!-- Vyhledávací pole -->
+<div class="relative flex flex-col gap-2">
+	<input
+		type="text"
+		placeholder="Hledat akcii..."
+		bind:value={input}
+		on:input={handleInput}
+		class="rounded-lg border border-gray-300 px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+	/>
+
+	<!-- Výpis výsledků hledání -->
+	{#if results.length > 0}
+		<ul
+			class="absolute top-14 z-10 flex w-full flex-col gap-2 rounded-lg border border-gray-300 bg-white p-2 shadow-lg"
+		>
+			{#each results as item}
+				<li>
+					<button
+						type="button"
+						class="w-full rounded-lg px-4 py-2 text-left transition-all duration-300 hover:bg-gray-100"
+						on:click={() => selectTicker(item)}
+					>
+						<span class="text-gray-600">{item.name ?? 'Unknown Name'}</span>
+						<span class="font-semibold">({item.ticker})</span>
+					</button>
+				</li>
+			{/each}
+		</ul>
+	{/if}
+</div>
+
+<!-- Pokud máme vybranou akcii, zobrazíme blok pro nákup + detaily o firmě -->
 {#if selectedStock}
-	<div class="mt-4">
-		<h3 class="text-xl">Zakoupit akcii: {selectedStock.name} ({selectedStock.ticker})</h3>
-		<p class="text-gray-600">Aktuální cena: {selectedStock.price}</p>
-		<input
-			type="number"
-			bind:value={amount}
-			min="1"
-			class="mt-2 rounded border p-2"
-			placeholder="Počet akcií"
-		/>
-		<input
-			type="date"
-			bind:value={buyDate}
-			class="mt-2 rounded border p-2"
-			max={new Date().toISOString().split('T')[0]}
-			min={new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString().split('T')[0]}
-		/>
+	<div class="mt-4 rounded bg-white p-4 shadow-md">
+		<h3 class="mb-2 text-lg font-semibold text-gray-700">
+			Zakoupit akcii: {selectedStock.name} ({selectedStock.ticker})
+		</h3>
+
+		<!-- Info o firmě (pokud je v selectedStock) -->
+		{#if selectedStock.market_cap}
+			<p class="text-sm text-gray-600">
+				<strong>Tržní kapitalizace:</strong>
+				{#if selectedStock.market_cap}
+					{#if +selectedStock.market_cap >= 1_000_000_000}
+						{(+selectedStock.market_cap / 1_000_000_000).toFixed(2)}$ miliardy
+					{:else if +selectedStock.market_cap >= 1_000_000}
+						{(+selectedStock.market_cap / 1_000_000).toFixed(2)}$ miliony
+					{:else if +selectedStock.market_cap >= 1_000}
+						{(+selectedStock.market_cap / 1_000).toFixed(2)}$ tisíce
+					{:else}
+						{+selectedStock.market_cap}$
+					{/if}
+				{:else}
+					-
+				{/if}
+			</p>
+		{/if}
+		{#if selectedStock.list_date}
+			<p class="text-sm text-gray-600">
+				<strong>Na burze od:</strong>
+				{DateTime.fromISO(selectedStock.list_date).toLocaleString(DateTime.DATE_MED)}
+			</p>
+		{/if}
+		{#if selectedStock.description}
+			<p class="mt-2 text-sm text-gray-500">
+				{selectedStock.description}
+			</p>
+		{/if}
+
+		<!-- Formulář pro zadání množství a data nákupu -->
+		<div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+			<div>
+				<label for="amount" class="block text-sm font-medium text-gray-700">Počet akcií</label>
+				<input
+					id="amount"
+					type="number"
+					min="0.001"
+					step="0.001"
+					bind:value={amount}
+					class="mt-1 w-32 rounded border p-2"
+				/>
+			</div>
+			<div>
+				<label for="buyDate" class="block text-sm font-medium text-gray-700">Datum nákupu</label>
+				<input
+					id="buyDate"
+					type="date"
+					bind:value={buyDate}
+					max={new Date().toISOString().slice(0, 10)}
+					min={new Date(new Date().setFullYear(new Date().getFullYear() - 10))
+						.toISOString()
+						.slice(0, 10)}
+					class="mt-1 rounded border p-2"
+				/>
+			</div>
+		</div>
+
+		<!-- Zobrazení historické ceny a celkové částky -->
+		<div class="mt-4 text-sm text-gray-700">
+			<p>
+				<strong>Cena teď:</strong>
+				{selectedStock.price ? `${selectedStock.price} USD` : 'Burza je zavřená'}
+			</p>
+			<p>
+				<strong>Cena k danému datu:</strong>
+				{historicalPrice > 0 ? `${historicalPrice} USD` : 'Burza je zavřená'}
+			</p>
+			<p>
+				<strong>Celková cena:</strong>
+				{historicalPrice > 0 ? (historicalPrice * amount).toFixed(2) + ' USD' : 'Burza je zavřená'}
+			</p>
+		</div>
+
+		<!-- Tlačítko pro nákup -->
 		<button
 			on:click={buyStock}
-			class="mt-4 bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600"
+			class="mt-4 {historicalPrice <= 0
+				? 'bg-green-900/10'
+				: ''} rounded bg-green-500 px-4 py-2 font-semibold text-white shadow transition-all duration-300 hover:bg-green-600"
+			disabled={historicalPrice <= 0}
 		>
-			Zakoupit akcii
+			Přidat akcii do portfolia
+		</button>
+		<button
+			on:click={() => (selectedStock = null)}
+			class="mt-4 rounded bg-transparent px-4 py-2 transition-all"
+		>
+			Zrušit
 		</button>
 	</div>
 {/if}
 
-<h1>Seznam akcií</h1>
-<table class="w-full border-collapse">
-	<thead>
-		<tr>
-			<th class="border p-2">Ticker</th>
-			<th class="border p-2">Název</th>
-			<th class="border p-2">Cena</th>
-		</tr>
-	</thead>
-	<tbody>
-		{#each stocks as { ticker, name, price }}
-			<tr>
-				<td class="border p-2">{ticker}</td>
-				<td class="border p-2">{name}</td>
-				<td class="border p-2">{price}</td>
-			</tr>
-		{/each}
-	</tbody>
-</table>
+<!-- Populární akcie (grafy) -->
+<h1 class="mt-8 text-xl font-semibold">Populární akcie 🔥</h1>
+<div class="mt-4 flex flex-col gap-4">
+	{#each popularTickets as stock}
+		<LineChart stockTicker={stock} {handleAddStock} />
+	{/each}
+</div>
+

@@ -22,6 +22,10 @@
 	let passwordNumber = true;
 	let emailValid = true;
 
+	function closeLogger() {
+		showLogger = false;
+	}
+
 	const handleSubmit = async () => {
 		if (password !== confirmPassword) {
 			loggerMsg.set('Hesla se neshodují!');
@@ -117,6 +121,6 @@
 		{/if}
 	</div>
 	{#if showLogger}
-		<Logger message={loggerMsg} on:close={() => showLogger = false} />
+		<Logger message={loggerMsg} type="error" {closeLogger}  />
 	{/if}
 </main>

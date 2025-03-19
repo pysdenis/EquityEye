@@ -6,7 +6,7 @@
 	let className = "";
 	export { className as class };
 
-	export let width: number;
+	export let width: number | "auto";
 	export let height: number;
 	export let imgClass = "";
 	export let loading: "eager" | "lazy" = "lazy";

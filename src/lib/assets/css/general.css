@@ -14,7 +14,7 @@ h5 {
 }
 
 h1 {
-	@apply font-poppins mx-auto mb-3 pt-8 text-5xl leading-[1.25] lg:mb-4 lg:pt-8 lg:text-6xl;
+	@apply font-poppins text-left mb-3 text-xl leading-[1.25] lg:mb-4 lg:text-2xl;
 }
 
 h1 {

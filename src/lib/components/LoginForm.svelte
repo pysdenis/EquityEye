@@ -15,6 +15,10 @@
 	let loggerMsg = writable('');
 	let wrongCredentials = false;
 
+	function closeLogger() {
+		showLogger = false;
+	}
+
 	onMount(() => {
 		const token = localStorage.getItem('token');
 		if (token) {
@@ -91,6 +95,6 @@
 		{/if}
 	</div>
 	{#if showLogger}
-		<Logger message={loggerMsg} on:close={() => (showLogger = false)} />
+		<Logger message={loggerMsg} type="error" {closeLogger} />
 	{/if}
 </main>

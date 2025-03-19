@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { Chart, Tooltip, type ChartData, type ChartOptions } from 'chart.js';
 	import type { HTMLCanvasAttributes } from 'svelte/elements';
-	import 'chartjs-adapter-luxon'; // Import the Luxon adapter
+	import 'chartjs-adapter-luxon';
 	import 'chart.js/auto';
 	import { DateTime } from 'luxon';
 	import type { CompanyInfo } from '../interfaces/CompanyInfo';
 	import StaticPicture from './picture/StaticPicture.svelte';
-	import { onDestroy } from 'svelte';
+	import plus from '../assets/icons/cross.svg?raw';
+	import Icon from './Icon.svelte';
 
 	interface Props extends HTMLCanvasAttributes {
 		stockTicker: string;
+		handleAddStock: (ticker: string | undefined) => void;
 	}
 
-	const { stockTicker }: Props = $props();
+	const { stockTicker, handleAddStock }: Props = $props();
 
 	let currentValue = $state(0);
 	let percentage = $state(0);
@@ -53,10 +55,7 @@
 			url.searchParams.set(`from`, from);
 
 			const res = await fetch(url.toString());
-
-			if (!res.ok) {
-				throw new Error(`API error: ${res.status}`);
-			}
+			if (!res.ok) throw new Error(`API error: ${res.status}`);
 
 			const stockData = await res.json();
 			if (stockData.length > 0) {
@@ -74,13 +73,9 @@
 			url.searchParams.set(`tickerSymbol`, stockTicker.toUpperCase());
 
 			const res = await fetch(url.toString());
+			if (!res.ok) throw new Error(`API error: ${res.status}`);
 
-			if (!res.ok) {
-				throw new Error(`API error: ${res.status}`);
-			}
-
-			const stockInfo = await res.json();
-			return stockInfo;
+			return await res.json();
 		} catch (error) {
 			console.error('Error fetching stock data:', error);
 		}
@@ -97,10 +92,7 @@
 			url.searchParams.set(`from`, from);
 
 			const res = await fetch(url.toString());
-
-			if (!res.ok) {
-				throw new Error(`API error: ${res.status}`);
-			}
+			if (!res.ok) throw new Error(`API error: ${res.status}`);
 
 			return await res.json();
 		} catch (error) {
@@ -114,8 +106,8 @@
 		datasets: [
 			{
 				label: stockTicker,
-				backgroundColor: 'rgba(30, 41, 123, 0.5)',
-				borderColor: 'rgb(30, 41, 59)',
+				backgroundColor: 'rgba(30, 41, 123, 0.7)',
+				borderColor: 'rgba(30, 41, 59, 0.9)',
 				data: [],
 				tension: 0.3,
 				fill: true,
@@ -126,7 +118,6 @@
 
 	const updateChartData = async () => {
 		const stockData = await fetchStockData();
-		console.log(stockData);
 		if (stockData.length > 0) {
 			data.labels = stockData.map((item: { x: string }) => item.x);
 			data.datasets[0].data = stockData.map((item: { y: number }) => item.y);
@@ -181,9 +172,12 @@
 	Chart.register(Tooltip);
 
 	let canvasElem: HTMLCanvasElement;
-	let chart: Chart;
+	let chart: Chart | null;
 
+	// Vytvoření grafu + cleanup při unmountu
 	$effect(() => {
+		if (!canvasElem) return;
+
 		chart = new Chart(canvasElem, {
 			type: 'line',
 			data,
@@ -191,35 +185,32 @@
 		});
 
 		return () => {
-			chart.destroy();
+			chart?.destroy();
+			chart = null;
 		};
 	});
 
+	// Reakce na změnu data => aktualizace grafu
 	$effect(() => {
 		if (chart) {
 			chart.data = data;
 			chart.update();
 		}
 	});
-
-	onDestroy(() => {
-		if (chart) {
-			chart.destroy();
-		}
-	});
 </script>
 
-<div class="flex flex-col bg-white p-4 pt-6 shadow-md lg:flex-row">
+<div class="flex flex-col bg-white p-4 pt-6 shadow-md lg:flex-row lg:justify-between">
 	<div>
 		{#if companyInfo}
 			<div class="mr-4 flex h-full justify-between lg:max-w-[300px] lg:flex-col">
 				<div class="flex flex-col gap-2">
 					<StaticPicture
 						image={companyInfo.logo}
-						width={200}
-						height={0}
+						width="auto"
+						height={30}
 						alt={companyInfo.name}
-						class="object-contain max-md:w-32 max-sm:w-20"
+						class="flex justify-start max-md:h-[1.175rem] max-sm:h-[1rem] md:h-[1.875rem]"
+						imgClass="object-contain max-md:h-[1.175rem] max-sm:h-[1rem] md:h-[1.875rem] md:max-w-[8.25rem] max-sm:max-w-[6.25rem]"
 					/>
 					<div class="text-2xs font-medium text-gray-800 max-sm:hidden md:text-md">
 						{companyInfo.name}
@@ -249,22 +240,32 @@
 						{DateTime.fromISO(companyInfo.list_date).toLocaleString(DateTime.DATE_MED)}
 					</div>
 				</div>
-				<div
-					class="-mt-2 flex h-full flex-col items-end lg:m-0 lg:h-auto lg:flex-row lg:items-center lg:gap-2"
-				>
-					<div class="text-md font-medium text-gray-900 md:text-3xl">
-						{currentValue ? currentValue.toFixed(2) : '-'}&nbsp;USD
-					</div>
-					<div class="flex items-center text-3xs md:text-sm">
-						<div class="flex items-center">
-							<span
-								class="mr-1"
-								class:text-green-600={percentage >= 0}
-								class:text-red-600={percentage < 0}
-							>
-								{percentage ? percentage.toFixed(2) : '-'}%
-							</span>
-							<span class="text-4xs text-gray-500">({timespanText})</span>
+				<div class="flex h-full flex-col-reverse max-lg:gap-2 lg:h-auto lg:flex-col">
+					<button
+						class="flex items-center gap-1 rounded-lg text-3xs font-light text-green-600 transition-all duration-300 hover:text-green-700 focus:outline-none max-lg:flex-row-reverse"
+						onclick={() => handleAddStock(companyInfo?.ticker)}
+					>
+						<Icon
+							icon={plus}
+							class="h-4 w-4 rotate-45 text-green-600 transition-all duration-300 hover:text-green-700"
+						/>
+						<span class="mt-[1px]">Přidat</span>
+					</button>
+					<div class="-mt-2 flex flex-col items-end lg:m-0 lg:flex-row lg:items-center lg:gap-2">
+						<div class="text-md font-medium text-gray-900 md:text-3xl">
+							{currentValue ? currentValue.toFixed(2) : '-'}&nbsp;USD
+						</div>
+						<div class="flex items-center text-3xs md:text-sm">
+							<div class="flex items-center">
+								<span
+									class="mr-1"
+									class:text-green-600={percentage >= 0}
+									class:text-red-600={percentage < 0}
+								>
+									{percentage ? percentage.toFixed(2) : '-'}%
+								</span>
+								<span class="text-4xs text-gray-500">({timespanText})</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -286,6 +287,7 @@
 							updateChartData();
 						}}
 						class="hover:text-blue-500 focus:outline-none"
+						class:text-blue-500={timespan === 'minute' && timespanText === '24h'}
 					>
 						1&nbsp;D
 					</button>
@@ -300,6 +302,7 @@
 							updateChartData();
 						}}
 						class="hover:text-blue-500 focus:outline-none"
+						class:text-blue-500={timespan === 'minute' && timespanText === '5d'}
 					>
 						5&nbsp;D
 					</button>
@@ -314,6 +317,7 @@
 							updateChartData();
 						}}
 						class="hover:text-blue-500 focus:outline-none"
+						class:text-blue-500={timespan === 'day' && timespanText === '1m'}
 					>
 						1&nbsp;M
 					</button>
@@ -328,6 +332,7 @@
 							updateChartData();
 						}}
 						class="hover:text-blue-500 focus:outline-none"
+						class:text-blue-500={timespan === 'day' && timespanText === '6m'}
 					>
 						6&nbsp;M
 					</button>
@@ -335,7 +340,6 @@
 						onclick={() => {
 							timespan = 'day';
 							from = DateTime.now().startOf('year').toISODate();
-							5;
 							multiplier = 1;
 							xAxeUnit = 'week';
 							timespanText = '1y';
@@ -343,6 +347,9 @@
 							updateChartData();
 						}}
 						class="hover:text-blue-500 focus:outline-none"
+						class:text-blue-500={timespan === 'day' &&
+							timespanText === '1y' &&
+							from === DateTime.now().startOf('year').toISODate()}
 					>
 						YTD
 					</button>
@@ -350,7 +357,6 @@
 						onclick={() => {
 							timespan = 'day';
 							from = DateTime.now().minus({ months: 12 }).toISODate();
-							5;
 							multiplier = 1;
 							xAxeUnit = 'week';
 							timespanText = '1y';
@@ -358,6 +364,9 @@
 							updateChartData();
 						}}
 						class="hover:text-blue-500 focus:outline-none"
+						class:text-blue-500={timespan === 'day' &&
+							timespanText === '1y' &&
+							from === DateTime.now().minus({ months: 12 }).toISODate()}
 					>
 						1&nbsp;R
 					</button>
@@ -365,7 +374,6 @@
 						onclick={() => {
 							timespan = 'day';
 							from = DateTime.now().minus({ years: 10 }).toISODate();
-							50;
 							multiplier = 1;
 							xAxeUnit = 'quarter';
 							timespanText = '10y';
@@ -373,6 +381,7 @@
 							updateChartData();
 						}}
 						class="hover:text-blue-500 focus:outline-none"
+						class:text-blue-500={timespan === 'day' && timespanText === '10y'}
 					>
 						10&nbsp;R
 					</button>
