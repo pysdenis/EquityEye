@@ -14,7 +14,7 @@ export const POST = async ({ request }) => {
 		}
 
 		// Kontrola, jestli už uživatel neexistuje
-		const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+		const existingUser = await User.findOne({ $or: [{ username }, { email }] }) || null;
 		if (existingUser) {
 			return json({ error: 'Uživatel s tímto jménem nebo E-mailem již existuje' }, { status: 400 });
 		}

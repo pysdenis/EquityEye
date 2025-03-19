@@ -74,7 +74,7 @@
 				<!-- 3 akcie z portfolia -->
 				{#if usersStocks && usersStocks.length > 0}
 					<div class="mt-2">
-						<div class="flex w-full mb-2 justify-between items-center">
+						<div class="mb-2 flex w-full items-center justify-between">
 							<span class="text-md font-medium text-gray-700">Náhled portfolia</span>
 							<a
 								href="/portfolio"
@@ -92,12 +92,22 @@
 					</div>
 				{:else}
 					<p class="mt-2 text-sm text-gray-500">Žádné akcie k zobrazení.</p>
+					<a href="/akcie" class="inline-block text-sm text-blue-600 underline hover:text-blue-800"
+						>Zde si je můžete přidat</a
+					>
 				{/if}
 			</section>
 
 			<section class="flex flex-col gap-4">
 				<div>
-					<h3 class="text-md font-medium text-gray-700">Populární akcie</h3>
+					<div class="mb-2 flex w-full items-center justify-between">
+						<span class="text-md font-medium text-gray-700">Populární akcie</span>
+						<a
+							href="/akcie"
+							class="inline-block text-sm text-blue-600 underline hover:text-blue-800"
+							>Další akcie</a
+						>
+					</div>
 					<div class="mt-2 grid grid-cols-1 gap-2">
 						{#each popularTickets.slice(0, 3) as ticker}
 							<div class="rounded bg-white p-2">
@@ -105,11 +115,6 @@
 							</div>
 						{/each}
 					</div>
-					<a
-						href="/akcie"
-						class="mt-3 inline-block text-sm text-blue-600 underline hover:text-blue-800"
-						>Další akcie</a
-					>
 				</div>
 			</section>
 		</div>
