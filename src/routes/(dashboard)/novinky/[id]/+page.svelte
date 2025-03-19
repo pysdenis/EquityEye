@@ -33,13 +33,6 @@
 			const data = await response.json();
 			if (data && Array.isArray(data.articles)) {
 				article = data.articles.find((article: Article) => article.url === targetUrl); // Hledáme správnou novinku
-				console.log(targetUrl + "------------targetUrl");
-				for (const article of data.articles) {
-					if (article.url === targetUrl) {
-						console.log(article);
-						break;
-					}
-				}
 			} else {
 				throw new Error('Response does not contain articles array');
 			}

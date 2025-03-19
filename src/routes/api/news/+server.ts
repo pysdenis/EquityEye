@@ -12,8 +12,6 @@ export async function GET({ url }) {
 
 	let apiUrl = `https://newsapi.org/v2/everything?q=${query}&sortBy=${sortBy}&apiKey=${apiKey}&pageSize=50&language=${language}`;
 
-	console.log(query);
-
 	if (from) {
 		const iso8601Regex =
 			/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})?)?$/;
@@ -41,8 +39,6 @@ export async function GET({ url }) {
 
 				const query = tickers.join(' OR ');
 				let apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=${sortBy}&apiKey=${apiKey}&pageSize=50&language=${language}`;
-
-				console.log(query);
 
 				if (from) apiUrl += `&from=${from}`;
 				if (to) apiUrl += `&to=${to}`;

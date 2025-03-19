@@ -40,7 +40,6 @@ const getStockPriceNow = async (ticker: string): Promise<number | null> => {
 		}
 
 		const data = await response.json();
-		console.log(data.results[0].c);
 		return data.results[0].c ?? null;
 	} catch (error) {
 		console.error('Chyba při získávání ceny akcie:', error);
@@ -54,7 +53,6 @@ export const POST: RequestHandler = async ({ request }) => {
 	let priceAtTime = null;
 
 	if (buyDate === new Date().toISOString().split('T')[0]) {
-		console.log('buyDate', buyDate);
 		priceAtTime = await getStockPriceNow(ticker);
 	} else {
 		//Získání aktuální ceny akcie

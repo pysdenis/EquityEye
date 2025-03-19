@@ -5,8 +5,6 @@ import Portfolio from '../../../../lib/models/PortfolioSchema';
 export const GET: RequestHandler = async ({ url }) => {
 	const userId = url.searchParams.get('userId');
 
-	console.log('userId:', userId);
-
 	if (!userId) {
 		return new Response(JSON.stringify({ error: 'Chybí userId parametr' }), { status: 400 });
 	}

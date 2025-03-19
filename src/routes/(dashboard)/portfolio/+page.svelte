@@ -326,17 +326,17 @@
 	<!-- Hlavní statistiky portfolia -->
 	<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 		<div class="text-lg font-semibold text-gray-700">
-			Hodnota portfolia: {currentPortfolioValue.toFixed(2)} USD
+			Hodnota portfolia: {currentPortfolioValue.toFixed(3)} USD
 		</div>
 		<div class="text-sm text-gray-600">
-			Investováno: {totalInvested.toFixed(2)} USD
+			Investováno: {totalInvested.toFixed(3)} USD
 		</div>
 		<div class="text-sm">
 			<!-- Zisk / ztráta -->
 			{#if difference >= 0}
-				<span class="text-green-600">+{difference.toFixed(2)} USD</span>
+				<span class="text-green-600">+{difference.toFixed(3)} USD</span>
 			{:else}
-				<span class="text-red-600">{difference.toFixed(2)} USD</span>
+				<span class="text-red-600">{difference.toFixed(3)} USD</span>
 			{/if}
 		</div>
 	</div>
@@ -366,16 +366,16 @@
 						{#each aggregatedPositions as stock, i}
 							<tr class="border-b hover:bg-gray-50">
 								<td class="p-2">{stock.ticker}</td>
-								<td class="p-2">{stock.amount.toFixed(2)}</td>
+								<td class="p-2">{stock.amount.toFixed(3)}</td>
 								<td class="p-2">
-									{stock.priceAtTime.toFixed(2)} USD
+									{stock.priceAtTime.toFixed(3)} USD
 								</td>
 								<!-- Místo volání async funkce v šabloně čteme currentPrices -->
 								<td class="p-2">
-									{(currentPrices[stock.ticker] ?? 0).toFixed(2)} USD
+									{(currentPrices[stock.ticker] ?? 0).toFixed(3)} USD
 								</td>
 								<td class="p-2">
-									{((currentPrices[stock.ticker] ?? 0) * stock.amount).toFixed(2)} USD
+									{((currentPrices[stock.ticker] ?? 0) * stock.amount).toFixed(3)} USD
 								</td>
 								<td class="p-2">
 									<!-- Prodej podle počtu kusů -->

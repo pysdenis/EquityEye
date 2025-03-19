@@ -37,8 +37,6 @@
 			if (!res.ok) throw new Error('Chyba při načítání portfolia');
 			portfolio = await res.json();
 
-			console.log('portfolio', portfolio);
-
 			if (portfolio && portfolio.stocks) {
 				// 1) Připravíme nové pole
 				let newArray: string[] = [];
@@ -49,8 +47,6 @@
 				}
 				// 2) Přiřadíme do usersStocks, aby se Svelte dozvědělo o změně
 				usersStocks = newArray;
-
-				console.log('usersStocks', usersStocks);
 			}
 		} catch (err) {
 			console.error(err);
