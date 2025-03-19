@@ -33,7 +33,7 @@
 		loading.set(true);
 		error.set('');
 
-		// po vyhledavani nefunguje url spravne ????????
+		// TODO po vyhledavani nefunguje url spravne ????????
 
 		const url = new URL('/api/news', window.location.origin);
 		url.searchParams.set('query', searchQuery || 'stocks');
