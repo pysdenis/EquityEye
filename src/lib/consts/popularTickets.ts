@@ -4,7 +4,7 @@ export const popularTickets = [
 	'MSFT', // Microsoft
 	'BRK.B', // Berkshire Hathaway (class B)
 	'AAPL', // Apple
-	'GOOGL', // Alphabet (Google)
+	'GOOG', // Alphabet (Google)
 	'NVDA', // Nvidia
 	'META', // Meta Platforms (Facebook)
 	'JPM', // JP Morgan

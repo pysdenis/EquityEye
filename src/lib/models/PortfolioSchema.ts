@@ -7,6 +7,7 @@ export interface IPortfolio extends Document {
 		amount: number;
 		priceAtTime: number;
 		dateAdded: Date;
+		dateSold?: Date;
 	}[];
 }
 
@@ -19,6 +20,7 @@ const PortfolioSchema = new mongoose.Schema<IPortfolio>({
 				amount: { type: Number, required: true },
 				priceAtTime: { type: Number, required: true },
 				dateAdded: { type: Date, default: Date.now },
+				dateSold: { type: Date },
 			},
 		],
 		default: [],

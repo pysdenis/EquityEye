@@ -103,13 +103,32 @@
 		}
 	}
 
+	let priceNow = 0;
+
 	// Načtení historické ceny k danému datu (vyžaduje vlastní backend endpoint)
 	async function loadHistoricalPrice(ticker: string, date: string) {
 		try {
+			const url = new URL(`/api/stocks`, window.location.origin);
+			url.searchParams.set(`ticker`, ticker.toUpperCase());
+
+			const res = await fetch(url.toString());
+
+			window.scrollTo(0, 0);
+
+			if (res.ok) {
+				const data = await res.json();
+				priceNow = data.results[0].c;
+			} else {
+				historicalPrice = 0;
+			}
+		} catch (error) {
+			console.error('Chyba při načítání ceny:', error);
+		}
+		try {
 			const url = new URL(`/api/stockNameDate`, window.location.origin);
 			url.searchParams.set(`tickerSymbol`, ticker.toUpperCase());
-			url.searchParams.set(`multiplier`, (1).toString());
-			url.searchParams.set(`timespan`, 'minute');
+			url.searchParams.set(`multiplier`, (5).toString());
+			url.searchParams.set(`timespan`, 'hour');
 			url.searchParams.set(`from`, date);
 
 			const res = await fetch(url.toString());
@@ -243,7 +262,7 @@
 		<div class="mt-4 text-sm text-gray-700">
 			<p>
 				<strong>Cena teď:</strong>
-				{selectedStock.price ? `${selectedStock.price} USD` : 'Burza je zavřená'}
+				{priceNow ? `${priceNow} USD` : 'Burza je zavřená'}
 			</p>
 			<p>
 				<strong>Cena k danému datu:</strong>
