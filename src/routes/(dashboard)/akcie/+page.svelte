@@ -195,42 +195,11 @@
 <!-- Pokud máme vybranou akcii, zobrazíme blok pro nákup + detaily o firmě -->
 {#if selectedStock}
 	<div class="mt-4 rounded bg-white p-4 shadow-md">
-		<h3 class="mb-2 text-lg font-semibold text-gray-700">
-			Zakoupit akcii: {selectedStock.name} ({selectedStock.ticker})
-		</h3>
-
-		<!-- Info o firmě (pokud je v selectedStock) -->
-		{#if selectedStock.market_cap}
-			<p class="text-sm text-gray-600">
-				<strong>Tržní kapitalizace:</strong>
-				{#if selectedStock.market_cap}
-					{#if +selectedStock.market_cap >= 1_000_000_000}
-						{(+selectedStock.market_cap / 1_000_000_000).toFixed(2)}$ miliardy
-					{:else if +selectedStock.market_cap >= 1_000_000}
-						{(+selectedStock.market_cap / 1_000_000).toFixed(2)}$ miliony
-					{:else if +selectedStock.market_cap >= 1_000}
-						{(+selectedStock.market_cap / 1_000).toFixed(2)}$ tisíce
-					{:else}
-						{+selectedStock.market_cap}$
-					{/if}
-				{:else}
-					-
-				{/if}
-			</p>
-		{/if}
-		{#if selectedStock.list_date}
-			<p class="text-sm text-gray-600">
-				<strong>Na burze od:</strong>
-				{DateTime.fromISO(selectedStock.list_date).toLocaleString(DateTime.DATE_MED)}
-			</p>
-		{/if}
-		{#if selectedStock.description}
-			<p class="mt-2 text-sm text-gray-500">
-				{selectedStock.description}
-			</p>
-		{/if}
-
+		<LineChart stockTicker={selectedStock.ticker} defaultStyle {handleAddStock} />
 		<!-- Formulář pro zadání množství a data nákupu -->
+		<p class="mt-2 text-xs text-gray-500">
+			{selectedStock.description}
+		</p>
 		<div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
 			<div>
 				<label for="amount" class="block text-sm font-medium text-gray-700">Počet akcií</label>
@@ -297,7 +266,7 @@
 <h1 class="mt-8 text-xl font-semibold">Populární akcie 🔥</h1>
 <div class="mt-4 flex flex-col gap-4">
 	{#each popularTickets as stock}
-		<LineChart stockTicker={stock} {handleAddStock} />
+		<LineChart stockTicker={stock} defaultStyle={false} {handleAddStock} />
 	{/each}
 </div>
 

@@ -1,53 +1,119 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
-	import { userStore } from '../../lib/stores/userStore';
 	import Loading from '../../lib/components/Loading.svelte';
+	import LineChart from '../../lib/components/LineChart.svelte';
+	import { popularTickets } from '../../lib/consts/popularTickets';
 	import type { IUser } from '../../lib/models/User';
 
-	let userData: IUser
+	let userData: IUser | null = null;
 
 	onMount(async () => {
-	  const token = localStorage.getItem('token');
-	  const response = await fetch('/api/dashboard', {
-		headers: {
-					'Authorization': `Bearer ${token}`,
-				},
-	  });
-	  if (response.ok) {
-		userData = await response.json();
-	  } else {
-		console.error('Failed to fetch user data');
-	  }
-
-	  console.log(userData);
+		loadPortfolio();
+		const token = localStorage.getItem('token');
+		try {
+			const response = await fetch('/api/dashboard', {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+			if (response.ok) {
+				userData = await response.json();
+			} else {
+				console.error('Failed to fetch user data');
+			}
+		} catch (error) {
+			console.error('Error fetching user data:', error);
+		}
 	});
 
+	let usersStocks: string[] = [];
 
-  </script>
+	async function loadPortfolio() {
+		let portfolio;
+		try {
+			const url = new URL('/api/portfolio/get', window.location.origin);
+			url.searchParams.set('userId', localStorage.getItem('id')!);
+			const res = await fetch(url.toString());
+			if (!res.ok) throw new Error('Chyba při načítání portfolia');
+			portfolio = await res.json();
 
-  <main>
-	<h1>Dashboard</h1>
+			console.log('portfolio', portfolio);
+
+			if (portfolio && portfolio.stocks) {
+				// 1) Připravíme nové pole
+				let newArray: string[] = [];
+				for (const stock of portfolio.stocks) {
+					if (stock.amount > 0) {
+						newArray.push(stock.ticker);
+					}
+				}
+				// 2) Přiřadíme do usersStocks, aby se Svelte dozvědělo o změně
+				usersStocks = newArray;
+
+				console.log('usersStocks', usersStocks);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	const handleAddStock = (stock: string | undefined) => {
+		window.location.href = `/akcie`;
+	};
+</script>
+
+<main class="flex min-h-screen flex-col items-center justify-center">
 	{#if userData}
-	  <!-- <section>
-		<h2>Welcome, {userData.username}</h2>
-		<p>Email: {userData.email}</p>
-		<h3>Portfolio</h3>
-		{#if userData.portfolioId.assets || userData.portfolioId.assets.length === 0}
-		  <p>No assets in portfolio</p>
-		{:else}
-		  <p>Assets in portfolio:</p>
-		{/if}
-		<ul>
-		  {#each userData.portfolioId.assets as asset}
-			<li>
-			  {asset.symbol}: {asset.quantity} units @ ${asset.currentValue}
-			</li>
-		  {/each}
-		</ul>
-	  </section> -->
+		<div class="grid w-full max-w-[1200px] grid-cols-1 gap-4">
+			<section class="flex flex-col gap-4 rounded">
+				<div>
+					<h2 class="text-lg font-semibold text-gray-700">Vítej, {userData.username}</h2>
+					<p class="text-sm text-gray-600">Email: {userData.email}</p>
+				</div>
+
+				<!-- 3 akcie z portfolia -->
+				{#if usersStocks && usersStocks.length > 0}
+					<div class="mt-2">
+						<div class="flex w-full mb-2 justify-between items-center">
+							<span class="text-md font-medium text-gray-700">Náhled portfolia</span>
+							<a
+								href="/portfolio"
+								class="inline-block text-sm text-blue-600 underline hover:text-blue-800"
+								>Moje portfolio</a
+							>
+						</div>
+						<div class="flex flex-col gap-2">
+							{#each usersStocks.slice(0, 3) as asset}
+								<div class="rounded bg-white p-2">
+									<LineChart stockTicker={asset} defaultStyle {handleAddStock} />
+								</div>
+							{/each}
+						</div>
+					</div>
+				{:else}
+					<p class="mt-2 text-sm text-gray-500">Žádné akcie k zobrazení.</p>
+				{/if}
+			</section>
+
+			<section class="flex flex-col gap-4">
+				<div>
+					<h3 class="text-md font-medium text-gray-700">Populární akcie</h3>
+					<div class="mt-2 grid grid-cols-1 gap-2">
+						{#each popularTickets.slice(0, 3) as ticker}
+							<div class="rounded bg-white p-2">
+								<LineChart stockTicker={ticker} defaultStyle {handleAddStock} />
+							</div>
+						{/each}
+					</div>
+					<a
+						href="/akcie"
+						class="mt-3 inline-block text-sm text-blue-600 underline hover:text-blue-800"
+						>Další akcie</a
+					>
+				</div>
+			</section>
+		</div>
 	{:else}
 		<Loading />
 	{/if}
-
-  </main>
+</main>

@@ -28,15 +28,43 @@ const getStockPrice = async (ticker: string, date: string): Promise<number | nul
 	}
 };
 
+const getStockPriceNow = async (ticker: string): Promise<number | null> => {
+	try {
+		const response = await fetch(
+			`https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?apiKey=${API_KEY}`
+		);
+
+		if (!response.ok) {
+			console.error('Chyba při získávání ceny akcie');
+			return null;
+		}
+
+		const data = await response.json();
+		console.log(data.results[0].c);
+		return data.results[0].c ?? null;
+	} catch (error) {
+		console.error('Chyba při získávání ceny akcie:', error);
+		return null;
+	}
+};
+
 // Endpoint pro přidání akcie do portfolia
 export const POST: RequestHandler = async ({ request }) => {
 	const { ticker, amount, userId, buyDate } = await request.json();
+	let priceAtTime = null;
 
-	// Získání aktuální ceny akcie
-	const priceAtTime = await getStockPrice(ticker, buyDate);
+	if (buyDate === new Date().toISOString().split('T')[0]) {
+		console.log('buyDate', buyDate);
+		priceAtTime = await getStockPriceNow(ticker);
+	} else {
+		//Získání aktuální ceny akcie
+		priceAtTime = await getStockPrice(ticker, buyDate);
+	}
 
 	if (priceAtTime === null) {
-		return new Response(JSON.stringify({ error: 'Chyba při získávání ceny akcie' }), { status: 500 });
+		return new Response(JSON.stringify({ error: 'Chyba při získávání ceny akcie' }), {
+			status: 500
+		});
 	}
 
 	// Uložení akcie do portfolia
@@ -52,9 +80,9 @@ export const POST: RequestHandler = async ({ request }) => {
 						ticker,
 						amount,
 						priceAtTime,
-						dateAdded: new Date(buyDate),
-					},
-				],
+						dateAdded: new Date(buyDate)
+					}
+				]
 			});
 			await newPortfolio.save();
 		} else {
@@ -63,13 +91,18 @@ export const POST: RequestHandler = async ({ request }) => {
 				ticker,
 				amount,
 				priceAtTime,
-				dateAdded: new Date(buyDate),
+				dateAdded: new Date(buyDate)
 			});
 			await portfolio.save();
 		}
 
-		return new Response(JSON.stringify({ message: 'Akcie úspěšně přidána do portfolia' }), { status: 200 });
+		return new Response(JSON.stringify({ message: 'Akcie úspěšně přidána do portfolia' }), {
+			status: 200
+		});
 	} catch (error) {
-		return new Response(JSON.stringify({ error: 'Chyba při ukládání akcie do portfolia' + error }), { status: 500 });
+		return new Response(
+			JSON.stringify({ error: 'Chyba při ukládání akcie do portfolia' + error }),
+			{ status: 500 }
+		);
 	}
 };

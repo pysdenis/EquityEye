@@ -7,9 +7,9 @@
 	// Datový typ pro jednu položku v portfoliu
 	interface PortfolioStock {
 		ticker: string;
-		amount: number;      // kladné/záporné/desetinné (např. 1.5 akcie)
+		amount: number; // kladné/záporné/desetinné (např. 1.5 akcie)
 		priceAtTime: number; // nákupní cena
-		dateAdded: string;   // ISO string (např. "2025-03-10T20:20:01.894Z")
+		dateAdded: string; // ISO string (např. "2025-03-10T20:20:01.894Z")
 	}
 
 	// Datový typ pro celé portfolio
@@ -60,9 +60,9 @@
 	}
 
 	let portfolio: Portfolio | null = null;
-	let totalInvested = 0;           // Součet (priceAtTime * amount)
-	let currentPortfolioValue = 0;   // Aktuální hodnota portfolia
-	let difference = 0;              // Rozdíl (aktuální hodnota - investováno)
+	let totalInvested = 0; // Součet (priceAtTime * amount)
+	let currentPortfolioValue = 0; // Aktuální hodnota portfolia
+	let difference = 0; // Rozdíl (aktuální hodnota - investováno)
 
 	// Seznam sloučených pozic pro tabulku (jedna řádka na každý ticker)
 	let aggregatedPositions: PortfolioStock[] = [];
@@ -102,14 +102,24 @@
 	let chartOptions: ChartOptions<'line'> = {
 		responsive: true,
 		maintainAspectRatio: false,
+		interaction: {
+			intersect: false
+		},
 		scales: {
 			x: {
 				type: 'time',
 				time: {
 					unit: 'day'
+				},
+				ticks: {
+					color: 'black'
 				}
 			},
-			y: {}
+			y: {
+				ticks: {
+					color: 'black'
+				}
+			}
 		},
 		plugins: {
 			legend: {
@@ -275,19 +285,20 @@
 			alert('Zadejte platný počet kusů pro prodej');
 			return;
 		}
-		const res = await fetch('/api/portfolio/sell', {
+		const res = await fetch('/api/portfolio/add', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				userId: localStorage.getItem('id'),
 				ticker: stock.ticker,
 				amount: -qty, // záporná hodnota = prodej
-				date: new Date().toISOString()
+				buyDate: new Date().toISOString().split('T')[0]
 			})
 		});
 		if (res.ok) {
 			alert('Prodej proběhl úspěšně');
 			sellQty[index] = 0;
+			window.location.reload();
 			await loadPortfolio(); // znovu načíst data
 		} else {
 			alert('Chyba při prodeji');

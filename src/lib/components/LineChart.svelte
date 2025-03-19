@@ -11,10 +11,11 @@
 
 	interface Props extends HTMLCanvasAttributes {
 		stockTicker: string;
+		defaultStyle: boolean | undefined;
 		handleAddStock: (ticker: string | undefined) => void;
 	}
 
-	const { stockTicker, handleAddStock }: Props = $props();
+	const { stockTicker, handleAddStock, defaultStyle }: Props = $props();
 
 	let currentValue = $state(0);
 	let percentage = $state(0);
@@ -199,7 +200,11 @@
 	});
 </script>
 
-<div class="flex flex-col bg-white p-4 pt-6 shadow-md lg:flex-row lg:justify-between">
+<div
+	class="flex flex-col bg-white {!defaultStyle
+		? 'p-4 pt-6 shadow-md'
+		: ''} lg:flex-row lg:justify-between"
+>
 	<div>
 		{#if companyInfo}
 			<div class="mr-4 flex h-full justify-between lg:max-w-[300px] lg:flex-col">
@@ -241,16 +246,18 @@
 					</div>
 				</div>
 				<div class="flex h-full flex-col-reverse max-lg:gap-2 lg:h-auto lg:flex-col">
-					<button
-						class="flex items-center gap-1 rounded-lg text-3xs font-light text-green-600 transition-all duration-300 hover:text-green-700 focus:outline-none max-lg:flex-row-reverse"
-						onclick={() => handleAddStock(companyInfo?.ticker)}
-					>
-						<Icon
-							icon={plus}
-							class="h-4 w-4 rotate-45 text-green-600 transition-all duration-300 hover:text-green-700"
-						/>
-						<span class="mt-[1px]">Přidat</span>
-					</button>
+					{#if !defaultStyle}
+						<button
+							class="flex items-center gap-1 rounded-lg text-3xs font-light text-green-600 transition-all duration-300 hover:text-green-700 focus:outline-none max-lg:flex-row-reverse"
+							onclick={() => handleAddStock(companyInfo?.ticker)}
+						>
+							<Icon
+								icon={plus}
+								class="h-4 w-4 rotate-45 text-green-600 transition-all duration-300 hover:text-green-700"
+							/>
+							<span class="mt-[1px]">Přidat</span>
+						</button>
+					{/if}
 					<div class="-mt-2 flex flex-col items-end lg:m-0 lg:flex-row lg:items-center lg:gap-2">
 						<div class="text-md font-medium text-gray-900 md:text-3xl">
 							{currentValue ? currentValue.toFixed(2) : '-'}&nbsp;USD

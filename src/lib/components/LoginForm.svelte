@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-	import logo from '$lib/assets/images/logo.png';
+	import logo from '$lib/assets/logo.png';
 	import Logger from './Logger.svelte';
 	import Icon from './Icon.svelte';
 	import opened from '$lib/assets/icons/opened.svg?raw';
@@ -56,7 +56,7 @@
 	<div class="mb-12">
 		<div class="flex w-full items-center justify-between">
 			<h1 class="m-0 p-0 text-xl uppercase">Přihlášení</h1>
-			<StaticPicture image={logo} height={48} width={48} alt="Logo THE CAP" imgClass="h-12" />
+			<StaticPicture image={logo} height={48} width={48} alt="Logo EquityEye" imgClass="h-12 mb-2" />
 		</div>
 		<form on:submit|preventDefault={handleSubmit} class="flex flex-col gap-4">
 			<label class="flex flex-col">

@@ -47,7 +47,7 @@ a {
 
 section,
 .section {
-	@apply mb-20 lg:mb-[6.75rem];
+	@apply mb-4 lg:mb-[1rem];
 }
 
 /*

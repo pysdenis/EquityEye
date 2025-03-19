@@ -43,7 +43,7 @@
 				</div>
 				<nav class="mt-7 flex flex-col gap-2">
 					<a
-						href="/admin"
+						href="/"
 						class="flex items-center justify-center rounded-md bg-gray-700 p-2 text-center text-white transition-all duration-300 hover:bg-gray-200 hover:text-text lg:justify-start"
 					>
 						<Icon icon={dashboard} class="h-5 w-5" />
@@ -91,7 +91,7 @@
 			</div>
 		</div>
 		<main
-			class="relative ml-[16.6667%] pt-10 flex h-full flex-1 flex-col px-2 py-2 pb-5 max-md:overflow-y-auto md:px-8"
+			class="relative ml-[16.6667%] flex h-full flex-1 flex-col px-2 py-2 pb-5 pt-10 max-md:overflow-y-auto md:px-8"
 		>
 			<slot />
 		</main>
