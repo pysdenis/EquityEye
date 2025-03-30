@@ -33,7 +33,6 @@ export default {
 				poppins: ["'Poppins'", 'sans-serif']
 			},
 			colors: {
-				// TODO: add better color palette
 				primary: {
 					DEFAULT: '#1e293b'
 				},

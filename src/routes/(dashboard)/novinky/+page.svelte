@@ -33,8 +33,6 @@
 		loading.set(true);
 		error.set('');
 
-		// TODO po filtrovani nefunguje url spravne ????????
-
 		const url = new URL('/api/news', window.location.origin);
 		url.searchParams.set('query', searchQuery || 'stocks');
 		url.searchParams.set('sortBy', sortBy);

@@ -7,7 +7,7 @@ export const userStore = writable<{ token: string | null; user: IUser | null }>(
 });
 
 export const setUser = (token: string, user: IUser) => {
-	userStore.set({ token, user }); // TODO save users data
+	userStore.set({ token, user });
 };
 
 export const logoutUser = () => {
