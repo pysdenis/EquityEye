@@ -10,12 +10,19 @@
 	import Icon from '../../lib/components/Icon.svelte';
 	import StaticPicture from '../../lib/components/picture/StaticPicture.svelte';
 	import logo from '$lib/assets/logo.png';
+	import { writable } from 'svelte/store';
+	import { onMount } from 'svelte';
+	import { refreshUnreadCount, unreadCount } from '../../lib/scripts/notifications';
 
 	const logout = async () => {
 		localStorage.removeItem('token');
 		3;
 		window.location.href = '/login';
 	};
+
+	onMount(async () => {
+		refreshUnreadCount();
+	});
 </script>
 
 <svelte:head>
@@ -83,10 +90,17 @@
 					/>
 				</button>
 				<a
-					class="group rounded-md p-2 text-2xs uppercase text-white transition-all duration-300 hover:bg-white"
+					class="group relative rounded-md p-2 text-2xs uppercase text-white transition-all duration-300 hover:bg-white"
 					href="/nastaveni"
 				>
 					<Icon icon={person} class="h-5 w-5 text-white transition-colors group-hover:text-black" />
+					{#if $unreadCount > 0}
+						<span
+							class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white"
+						>
+							{$unreadCount}
+						</span>
+					{/if}
 				</a>
 			</div>
 		</div>

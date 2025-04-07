@@ -1,5 +1,6 @@
 import { type RequestHandler } from '@sveltejs/kit';
 import Portfolio from '../../../../lib/models/PortfolioSchema';
+import Notification from '../../../../lib/models/NotificationsSchema';
 
 const API_KEY = process.env.POLYGON_KEY;
 
@@ -93,6 +94,13 @@ export const POST: RequestHandler = async ({ request }) => {
 			});
 			await portfolio.save();
 		}
+
+		await Notification.create({
+			userId,
+			type: 'stock_purchase',
+			message: `Zakoupil jsi ${amount} ks ${ticker} za ${priceAtTime} USD`,
+			relatedStock: ticker
+		});
 
 		return new Response(JSON.stringify({ message: 'Akcie úspěšně přidána do portfolia' }), {
 			status: 200

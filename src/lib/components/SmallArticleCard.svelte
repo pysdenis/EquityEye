@@ -31,7 +31,7 @@
 			>{localizeDate(article.publishedAt)}</span
 		>
 		{#if article.urlToImage}
-			<a href="/novinky/{encodeURIComponent(article.url)}{param}">
+			<a href={'/novinky/' + encodeURIComponent(article.url) + param}>
 				<StaticPicture
 					image={article.urlToImage}
 					loading="eager"
@@ -47,7 +47,7 @@
 		{/if}
 		<div class="p-4">
 			<span>
-				<a href="/novinky/{encodeURIComponent(article.url)}{param}">
+				<a href={'/novinky/' + encodeURIComponent(article.url) + param}>
 					<h2 class="m-0 text-sm font-bold text-primary md:text-md">
 						{shortenText(article.title, 40)}
 					</h2>

@@ -4,6 +4,7 @@
 	import { popularTickets } from '../../../lib/consts/popularTickets';
 	import Logger from '../../../lib/components/Logger.svelte';
 	import { writable } from 'svelte/store';
+	import { refreshUnreadCount } from '../../../lib/scripts/notifications';
 
 	let query = '';
 	let results: any[] = [];
@@ -31,6 +32,15 @@
 			type = 'error';
 			return;
 		}
+		const selectedDate = new Date(buyDate);
+		const day = selectedDate.getDay();
+		if (day === 0 || day === 6) {
+			// 0 = Sunday, 6 = Saturday
+			showLogger = true;
+			message.set('Vybrané datum je víkend. Vyberte prosím pracovní den.');
+			type = 'error';
+			return;
+		}
 		const res = await fetch('/api/portfolio/add', {
 			method: 'POST',
 			headers: {
@@ -43,6 +53,8 @@
 				buyDate
 			})
 		});
+
+		refreshUnreadCount();
 
 		if (res.ok) {
 			showLogger = true;
@@ -158,7 +170,7 @@
 </script>
 
 {#if showLogger}
-	<Logger message={message} {type} {closeLogger} />
+	<Logger {message} {type} {closeLogger} />
 {/if}
 
 <!-- Vyhledávací pole -->
@@ -223,6 +235,20 @@
 						.toISOString()
 						.slice(0, 10)}
 					class="mt-1 rounded border p-2"
+					on:change={(event: Event) => {
+						const buyDate = (event.target as HTMLInputElement).value;
+						if (buyDate) {
+							const selectedDate = new Date(buyDate);
+							const day = selectedDate.getDay();
+							if (day === 0 || day === 6) {
+								// 0 = Sunday, 6 = Saturday
+								showLogger = true;
+								message.set('Vybrané datum je víkend. Vyberte prosím pracovní den.');
+								type = 'error';
+								return;
+							}
+						}
+					}}
 				/>
 			</div>
 		</div>
@@ -269,4 +295,3 @@
 		<LineChart stockTicker={stock} defaultStyle={false} {handleAddStock} />
 	{/each}
 </div>
-

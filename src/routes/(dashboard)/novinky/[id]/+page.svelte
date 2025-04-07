@@ -57,7 +57,7 @@
 </a>
 {#if article}
 	<div class="max-w-4xl mx-auto p-4 pt-0">
-		<h1 class="text-3xl font-bold mb-4">{article.title}</h1>
+		<h1 class="text-3xl font-bold mt-4 mb-4">{article.title}</h1>
 		<StaticPicture
 			image={article.urlToImage}
 			alt="Obrázek článku"
