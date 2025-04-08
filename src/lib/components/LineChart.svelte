@@ -209,14 +209,16 @@
 		{#if companyInfo}
 			<div class="mr-4 flex h-full justify-between lg:max-w-[300px] lg:flex-col">
 				<div class="flex flex-col gap-2">
-					<StaticPicture
-						image={companyInfo.logo}
-						width="auto"
-						height={30}
-						alt={companyInfo.name}
-						class="flex justify-start max-md:h-[1.175rem] max-sm:h-[1rem] md:h-[1.875rem]"
-						imgClass="object-contain max-md:h-[1.175rem] max-sm:h-[1rem] md:h-[1.875rem] md:max-w-[8.25rem] max-sm:max-w-[6.25rem]"
-					/>
+					{#if companyInfo.logo.length > 0}
+						<StaticPicture
+							image={companyInfo.logo}
+							width="auto"
+							height={30}
+							alt={companyInfo.name}
+							class="flex justify-start max-md:h-[1.175rem] max-sm:h-[1rem] md:h-[1.875rem]"
+							imgClass="object-contain max-md:h-[1.175rem] max-sm:h-[1rem] md:h-[1.875rem] md:max-w-[8.25rem] max-sm:max-w-[6.25rem]"
+						/>
+					{/if}
 					<div class="text-2xs font-medium text-gray-800 max-sm:hidden md:text-md">
 						{companyInfo.name}
 						<span class="text-3xs text-gray-500 md:text-sm">({companyInfo.ticker})</span>

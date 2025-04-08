@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { parseSourceSet } from "./parseSourceSet.js";
 	import type { SourceSetQuery } from "./SourceSetQuery.js";
-	import placeholderImg from '$lib/assets/images/placeholder.png'
+	import placeholderImg from '$lib/assets/images/placeholder.jpg'
 
 	let className = "";
 	export { className as class };
