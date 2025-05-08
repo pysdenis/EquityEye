@@ -203,7 +203,7 @@
 <div
 	class="flex flex-col bg-white {!defaultStyle
 		? 'p-4 pt-6 shadow-md'
-		: ''} lg:flex-row lg:justify-between"
+		: 'p-2'} lg:flex-row lg:justify-between"
 >
 	<div>
 		{#if companyInfo}

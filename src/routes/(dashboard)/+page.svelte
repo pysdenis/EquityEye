@@ -4,6 +4,8 @@
 	import LineChart from '../../lib/components/LineChart.svelte';
 	import { popularTickets } from '../../lib/consts/popularTickets';
 	import type { IUser } from '../../lib/models/User';
+	import person from '$lib/assets/icons/person.svg?raw';
+	import Icon from '../../lib/components/Icon.svelte';
 
 	let userData: IUser | null = null;
 
@@ -62,9 +64,9 @@
 	{#if userData}
 		<div class="grid w-full max-w-[1200px] grid-cols-1 gap-4">
 			<section class="flex flex-col gap-4 rounded">
-				<div>
-					<h2 class="text-lg font-semibold text-gray-700">Vítej, {userData.username}</h2>
-					<p class="text-sm text-gray-600">Email: {userData.email}</p>
+				<div class="flex gap-2 items-center w-min">
+					<Icon icon={person} class="h-5 w-5 text-white transition-colors group-hover:text-black" />
+					<h2 class="text-lg m-0 font-semibold text-gray-700 text-nowrap">{userData.username}</h2>
 				</div>
 
 				<!-- 3 akcie z portfolia -->

@@ -10,7 +10,6 @@
 	import Icon from '../../lib/components/Icon.svelte';
 	import StaticPicture from '../../lib/components/picture/StaticPicture.svelte';
 	import logo from '$lib/assets/logo.png';
-	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import { refreshUnreadCount, unreadCount } from '../../lib/scripts/notifications';
 
@@ -26,7 +25,7 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard</title>
+	<title>Equity Eye</title>
 </svelte:head>
 
 <AuthGuard>
@@ -43,7 +42,7 @@
 							imgClass="h-10 md:h-12 object-contain w-fit"
 						/>
 						<span
-							class="mt-1.5 text-md font-semibold tracking-wider text-white max-lg:hidden xl:text-lg"
+							class="mt-[4px] text-md font-semibold tracking-wider text-white max-lg:hidden xl:text-lg"
 							>EquityEye</span
 						>
 					</a>
@@ -104,10 +103,10 @@
 				</a>
 			</div>
 		</div>
-		<main
+		<div
 			class="relative ml-[16.6667%] flex h-full flex-1 flex-col px-2 py-2 pb-5 pt-10 max-md:overflow-y-auto md:px-8"
 		>
 			<slot />
-		</main>
+		</div>
 	</div>
 </AuthGuard>
