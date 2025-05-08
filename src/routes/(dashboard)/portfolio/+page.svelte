@@ -322,7 +322,7 @@
 	}
 </script>
 
-<div class="flex flex-col gap-4 rounded bg-white p-4 shadow-md">
+<div class="flex flex-col gap-4 bg-white p-4 shadow-md">
 	<!-- Hlavní statistiky portfolia -->
 	<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 		<div class="text-lg font-semibold text-gray-700">

@@ -6,11 +6,10 @@
 	import mglass from '$lib/assets/icons/mglass.svg?raw';
 	import bell from '$lib/assets/icons/news.svg?raw';
 	import dashboard from '$lib/assets/icons/dashboard.svg?raw';
+	import website from '$lib/assets/icons/website.svg?raw';
 	import spark from '$lib/assets/icons/graph.svg?raw';
 	import type { IUser } from '../../lib/models/User';
 	import { popularTickets } from '../../lib/consts/popularTickets';
-	import LineChart from '../../lib/components/LineChart.svelte';
-	import Loading from '../../lib/components/Loading.svelte';
 
 	let username = '';
 	let portfolioValue = 0;
@@ -38,12 +37,10 @@
 	let currentPrices: Record<string, number> = {};
 
 	onMount(async () => {
-		console.log('onMount - začínám načítat data...');
 		await loadData();
 		await loadNews();
 		await loadPortfolio();
 		await loadPopularStocks();
-		console.log('onMount - všechna data načtena');
 	});
 
 	let userData: IUser | null = null;
@@ -163,10 +160,6 @@
 			previousTotalValue > 0 ? ((totalValue - previousTotalValue) / previousTotalValue) * 100 : 0;
 	}
 
-	const handleAddStock = (stock: string | undefined) => {
-		window.location.href = `/akcie`;
-	};
-
 	async function loadData() {
 		loading = true;
 		const token = localStorage.getItem('token');
@@ -182,12 +175,6 @@
 			lastNotification = data.lastNotification;
 		}
 		loading = false;
-	}
-
-	async function refresh() {
-		refreshing = true;
-		await loadData();
-		refreshing = false;
 	}
 
 	function formatDate(date: string) {
@@ -272,20 +259,6 @@
 		<Icon icon={person} class="h-9 w-9 rounded-full bg-white p-2 text-sky-700 shadow" />
 		<span class="text-lg font-semibold tracking-wide text-slate-800">{username}</span>
 		<div class="flex-1"></div>
-		<button
-			on:click={refresh}
-			class="group relative flex h-9 w-9 items-center justify-center rounded-full bg-white shadow transition hover:bg-sky-100 disabled:opacity-60"
-			disabled={refreshing}
-		>
-			<Icon
-				icon={dashboard}
-				class="h-5 w-5 text-sky-700 transition-transform group-hover:scale-110"
-			/>
-			<span
-				class="absolute -bottom-7 left-1/2 -translate-x-1/2 text-xs text-slate-400 opacity-0 transition group-hover:opacity-100"
-				>Obnovit</span
-			>
-		</button>
 	</div>
 
 	<!-- Cards grid -->
@@ -318,24 +291,25 @@
 			{/if}
 			<span
 				class="absolute right-4 top-4 text-xs text-slate-400 opacity-0 transition group-hover:opacity-100"
-				>Celková hodnota</span
+				>Portfolio</span
 			>
 		</div>
 
 		<!-- Moje akcie -->
-		<div
+		<a
+			href="/portfolio"
 			class="group relative flex flex-col gap-2 bg-white p-6 shadow-lg transition hover:shadow-xl"
 		>
 			<div class="mb-1 flex items-center gap-2">
 				<Icon icon={mglass} class="h-6 w-6 text-sky-600" />
-				<span class="text-sm font-medium text-slate-500">Top 3 z mých akcií</span>
+				<span class="text-sm font-medium text-slate-500">Moje top 3 akcie</span>
 			</div>
 			{#if loading}
 				<div class="mb-1 h-6 w-24 animate-pulse rounded bg-slate-100"></div>
 			{:else if stocks.length === 0}
 				<div class="text-sm text-slate-400">Žádné akcie</div>
 			{:else}
-				{#each stocks.slice(-3) as stock}
+				{#each stocks.slice(0, 3) as stock}
 					<div
 						class="flex w-full items-center justify-between rounded-lg px-2 py-1 transition hover:bg-slate-50 {getBestStock()
 							?.ticker === stock.ticker
@@ -356,9 +330,9 @@
 			{/if}
 			<span
 				class="absolute right-4 top-4 text-xs text-slate-400 opacity-0 transition group-hover:opacity-100"
-				>Top 3 z portfolia</span
+				>Portfolio</span
 			>
-		</div>
+		</a>
 
 		<!-- Zpráva dne -->
 		{#if currentNews}
@@ -368,13 +342,13 @@
 				class="group relative flex flex-col items-start gap-2 bg-gradient-to-br from-yellow-100 to-yellow-50 p-6 shadow-lg transition hover:shadow-xl"
 			>
 				<div class="mb-1 flex items-center gap-2">
-					<Icon icon={spark} class="h-6 w-6 text-yellow-500" />
+					<Icon icon={bell} class="h-6 w-6 text-yellow-500" />
 					<span class="font-semibold text-yellow-700">Zpráva dne</span>
 				</div>
 				<h3 class="mb-2 duration-300 group-hover:text-black lg:text-lg">{currentNews.title}</h3>
 				<span
 					class="absolute right-4 top-4 text-xs text-yellow-600 opacity-0 transition group-hover:opacity-100"
-					>Aktuální novinka</span
+					>Novinka</span
 				>
 			</a>
 		{:else}
@@ -382,24 +356,25 @@
 				class="group relative flex flex-col items-start gap-2 bg-gradient-to-br from-yellow-100 to-yellow-50 p-6 shadow-lg transition hover:shadow-xl"
 			>
 				<div class="mb-1 flex items-center gap-2">
-					<Icon icon={spark} class="h-6 w-6 text-yellow-500" />
+					<Icon icon={bell} class="h-6 w-6 text-yellow-500" />
 					<span class="font-semibold text-yellow-700">Zpráva dne</span>
 				</div>
 				<div class="text-sm text-yellow-900">Načítání novinek...</div>
 				<span
 					class="absolute right-4 top-4 text-xs text-yellow-600 opacity-0 transition group-hover:opacity-100"
-					>Aktuální novinka</span
+					>Novinka</span
 				>
 			</div>
 		{/if}
 	</div>
 
 	<div class="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-2">
-		<div
+		<a
+			href="/portfolio"
 			class="group relative flex flex-col gap-2 bg-white p-6 shadow-lg transition hover:shadow-xl"
 		>
 			<div class="mb-1 flex items-center gap-2">
-				<Icon icon={mglass} class="h-6 w-6 text-sky-600" />
+				<Icon icon={dashboard} class="h-6 w-6 text-sky-600" />
 				<span class="text-sm font-medium text-slate-500">Moje akcie</span>
 			</div>
 			{#if loading}
@@ -428,14 +403,15 @@
 			{/if}
 			<span
 				class="absolute right-4 top-4 text-xs text-slate-400 opacity-0 transition group-hover:opacity-100"
-				>Všechny mé akcie</span
+				>Portfolio</span
 			>
-		</div>
-		<div
+				</a>
+		<a
+			href="/akcie"
 			class="group relative flex flex-col gap-2 bg-white p-6 shadow-lg transition hover:shadow-xl"
 		>
 			<div class="mb-1 flex items-center gap-2">
-				<Icon icon={mglass} class="h-6 w-6 text-sky-600" />
+				<Icon icon={website} class="h-6 w-6 text-sky-600" />
 				<span class="text-sm font-medium text-slate-500">Populární akcie</span>
 			</div>
 			{#if loadingPopularStocks}
@@ -461,8 +437,8 @@
 			{/if}
 			<span
 				class="absolute right-4 top-4 text-xs text-slate-400 opacity-0 transition group-hover:opacity-100"
-				>Populární akcie</span
+				>Akcie</span
 			>
-		</div>
+		</a>
 	</div>
 </main>
