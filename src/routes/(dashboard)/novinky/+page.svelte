@@ -34,7 +34,7 @@
 		error.set('');
 
 		const url = new URL('/api/news', window.location.origin);
-		url.searchParams.set('query', searchQuery || 'stocks');
+		url.searchParams.set('query', searchQuery || 'akcie');
 		url.searchParams.set('sortBy', sortBy);
 		userId = localStorage.getItem('id') || '';
 

@@ -7,7 +7,7 @@ export async function GET({ url }) {
 	const from = url.searchParams.get('from');
 	const to = url.searchParams.get('to');
 	const sortBy = url.searchParams.get('sortBy') || 'publishedAt';
-	const language = url.searchParams.get('language') || 'en';
+	const language = url.searchParams.get('language') || 'cs';
 	const userId = url.searchParams.get('userId');
 
 	let apiUrl = `https://newsapi.org/v2/everything?q=${query}&sortBy=${sortBy}&apiKey=${apiKey}&pageSize=50&language=${language}`;
